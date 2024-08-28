@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:market_mobile/models/product.dart';
-import 'package:market_mobile/pages/product_store.dart';
+import 'package:market_mobile/pages/product/product_store.dart';
 
 // TODO: Criar o deleteProduct (para excluir ele do banco)
 
@@ -57,18 +57,8 @@ class _ProductPageState extends State<ProductPage> {
                 padding: const EdgeInsets.all(16),
                 child: TextField(
                   decoration: InputDecoration(
-                    suffixIcon: const Icon(Icons.search),
+                    suffixIcon: IconButton(onPressed: () {print("Search");}, icon: const Icon(Icons.search)),
                     labelText: "Pesquisar produto",
-                    filled: true,
-                    fillColor: const Color.fromARGB(255, 243, 236, 245),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
                   ),
                 ),
               ),

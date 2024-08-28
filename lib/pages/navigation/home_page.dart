@@ -7,7 +7,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 200),
+        margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 150),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,

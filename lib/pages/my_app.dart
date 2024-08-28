@@ -1,11 +1,12 @@
 import 'package:market_mobile/http/http_client.dart';
 import 'package:flutter/material.dart';
 import 'package:market_mobile/models/product.dart';
-import 'package:market_mobile/pages/home_page.dart';
-import 'package:market_mobile/pages/insights_page.dart';
-import 'package:market_mobile/pages/product_item_page.dart';
-import 'package:market_mobile/pages/product_page.dart';
-import 'package:market_mobile/pages/product_store.dart';
+import 'package:market_mobile/pages/navigation/home_page.dart';
+import 'package:market_mobile/pages/navigation/insights_page.dart';
+import 'package:market_mobile/pages/product/product_item_page.dart';
+import 'package:market_mobile/pages/navigation/product_page.dart';
+import 'package:market_mobile/pages/product/product_store.dart';
+import 'package:market_mobile/pages/navigation/profile_page.dart';
 import 'package:market_mobile/repositories/repository.dart';
 
 // const Color.fromARGB(255, 243, 236, 245)
@@ -45,14 +46,12 @@ class _MyAppState extends State<MyApp> {
                 height: 75,
                 child: FloatingActionButton(
                   onPressed: () {
+                    showProductItemPage();
                     print("Botão flutuante");
                   },
-                  backgroundColor: const Color.fromARGB(255, 243, 236, 245),
-                  foregroundColor: Colors.black,
                   child: const Icon(Icons.add, size: 64),
                 ),
               ),
-        backgroundColor: Colors.white,
         bottomNavigationBar: NavigationBar(
           onDestinationSelected: (int index) {
             setState(() {
@@ -83,15 +82,13 @@ class _MyAppState extends State<MyApp> {
           const HomePage(),
           const InsightsPage(),
           ProductPage(store: store),
-          Container(
-            color: const Color.fromARGB(255, 243, 236, 245),
-          ),
+          const ProfilePage(),
         ][currentPageIndex],
       ),
     );
   }
 
-  void showProductItemPage(Product? product) async {
+  void showProductItemPage({Product? product}) async {
     final Product? retProduct = await Navigator.push(
         context,
         MaterialPageRoute<Product>(
