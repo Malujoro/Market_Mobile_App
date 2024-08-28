@@ -1,26 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:market_mobile/http/http_client.dart';
 import 'package:market_mobile/models/product.dart';
-import 'package:market_mobile/pages/product_item_page.dart';
 import 'package:market_mobile/pages/product_store.dart';
-import 'package:market_mobile/repositories/repository.dart';
+
+// TODO: Criar o deleteProduct (para excluir ele do banco)
 
 class ProductPage extends StatefulWidget {
-  const ProductPage({super.key});
+  const ProductPage({super.key, required this.store});
+
+  final ProductStore store;
 
   @override
   State<ProductPage> createState() => _ProductPageState();
 }
 
 class _ProductPageState extends State<ProductPage> {
-  final ProductStore store = ProductStore(
-    repository: ProductRepository(
-      client: HttpClient(),
-    ),
-  );
+  late final ProductStore store;
 
   @override
   void initState() {
+    store = widget.store;
     super.initState();
     store.getProducts();
   }
@@ -110,24 +108,5 @@ class _ProductPageState extends State<ProductPage> {
       ),
     );
   }
-
-  void showProductPage(Product? product) async {
-    final Product? retProduct = await Navigator.push(
-        context,
-        MaterialPageRoute<Product>(
-            builder: (context) => ProductItemPage(
-                  product: product,
-                )));
-    if (retProduct != null) {
-      // TODO: Criar o putProduct (para atualizar ele no banco)
-    } else {
-      // TODO: Criar o postProduct (para adicionar ele no banco)
-    }
-    setState(() {
-      // TODO: Criar CallBack para o MyApp conseguir usar a showProductPage também
-      store.getProducts();
-    });
-  }
 }
 
-// TODO: Criar o deleteProduct (para excluir ele do banco)
