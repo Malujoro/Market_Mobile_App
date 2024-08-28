@@ -5,6 +5,9 @@ import 'package:market_mobile/pages/product_page.dart';
 
 // const Color.fromARGB(255, 243, 236, 245)
 
+// TODO: Criar toda a página de vendas
+// TODO: Criar toda a página de usuário (com login)
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -25,17 +28,17 @@ class _MyAppState extends State<MyApp> {
         floatingActionButton: currentPageIndex != 2
             ? null
             : SizedBox(
-              width: 75,
-              height: 75,
-              child: FloatingActionButton(
+                width: 75,
+                height: 75,
+                child: FloatingActionButton(
                   onPressed: () {
                     print("Botão flutuante");
                   },
                   backgroundColor: const Color.fromARGB(255, 243, 236, 245),
-                  foregroundColor: Colors.black, 
+                  foregroundColor: Colors.black,
                   child: const Icon(Icons.add, size: 64),
                 ),
-            ),
+              ),
         backgroundColor: Colors.white,
         bottomNavigationBar: NavigationBar(
           onDestinationSelected: (int index) {

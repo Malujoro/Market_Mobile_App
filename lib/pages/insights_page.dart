@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// TODO: Adicionar as funcionalidades do insight
+
 List<String> list = [
   "Últimas 24h",
   "Última semana",
