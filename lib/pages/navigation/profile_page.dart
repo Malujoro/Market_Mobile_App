@@ -122,10 +122,10 @@ class _ProfilePageState extends State<ProfilePage> with ValidationsMixin {
     );
   }
 
-  Future attemptLogin(String email, String password,
+  Future<Map<String, String>?> attemptLogin(String email, String password,
       [Role role = Role.user]) async {
     isLoading.value = true;
-    var headers = {'Content-Type': 'application/json'};
+    Map<String, String> headers = {'Content-Type': 'application/json'};
     var request = http.Request(
       'POST',
       Uri.parse('https://marketmobile-api.onrender.com/auth/login'),
@@ -140,7 +140,8 @@ class _ProfilePageState extends State<ProfilePage> with ValidationsMixin {
     http.StreamedResponse response = await request.send();
 
     if (response.statusCode == 200) {
-      var teste = jsonDecode(await response.stream.bytesToString());
+      Map<String, String> teste =
+          jsonDecode(await response.stream.bytesToString());
       print(teste);
       print(teste["token"]);
     } else {
@@ -164,7 +165,6 @@ class _ProfilePageState extends State<ProfilePage> with ValidationsMixin {
       print(response.body);
       return response.body;
     }
-    // TODO: Erro 400 se não conseguir registrar
     return null;
   }
 }
