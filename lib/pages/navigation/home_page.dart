@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// TODO: Adicionar todas as funcionalidades da Home
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 

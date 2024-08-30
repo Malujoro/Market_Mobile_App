@@ -22,6 +22,16 @@ class Product {
     );
   }
 
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> mapa = {
+      "barCode" : barCode,
+      "name" : name,
+      "description" : description,
+      "price" : price,
+    };
+    return mapa;
+  }
+
   Widget productWidget(Function richTextCreator) {
     return Padding(
       padding: const EdgeInsets.all(8.0),

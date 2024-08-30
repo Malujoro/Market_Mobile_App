@@ -3,11 +3,14 @@ import 'package:market_mobile/models/product.dart';
 import 'package:market_mobile/pages/product/product_store.dart';
 
 // TODO: Criar o deleteProduct (para excluir ele do banco)
+// TODO: Fazer uma ordenação alfabética ("Padrão") pelo nome do produto
+// TODO: Fazer o sistema de busca de produtos
 
 class ProductPage extends StatefulWidget {
-  const ProductPage({super.key, required this.store});
+  const ProductPage({super.key, required this.store, required this.showProductItemPage});
 
   final ProductStore store;
+  final Function({Product? product}) showProductItemPage;
 
   @override
   State<ProductPage> createState() => _ProductPageState();
@@ -57,7 +60,11 @@ class _ProductPageState extends State<ProductPage> {
                 padding: const EdgeInsets.all(16),
                 child: TextField(
                   decoration: InputDecoration(
-                    suffixIcon: IconButton(onPressed: () {print("Search");}, icon: const Icon(Icons.search)),
+                    suffixIcon: IconButton(
+                        onPressed: () {
+                          print("Search");
+                        },
+                        icon: const Icon(Icons.search)),
                     labelText: "Pesquisar produto",
                   ),
                 ),
@@ -74,7 +81,14 @@ class _ProductPageState extends State<ProductPage> {
                     shrinkWrap: true,
                     children: [
                       for (Product product in store.state.value)
-                        product.productWidget(richTextCreator),
+                        GestureDetector(
+                          onTap: () {
+                            widget.showProductItemPage(product: product);
+                          },
+                          child: Card(
+                            child: product.productWidget(richTextCreator),
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -99,4 +113,3 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 }
-

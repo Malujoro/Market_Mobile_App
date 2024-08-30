@@ -20,11 +20,39 @@ class ProductStore {
       state.value = result;
     } on NotFoundException catch (e) {
       error.value = e.message;
-    } catch(e) {
+    } catch (e) {
       error.value = e.toString();
     }
 
     isLoading.value = false;
   }
 
+  Future postProduct(Product product) async {
+    isLoading.value = true;
+
+    try {
+      await repository.queryProduct(product, Query.post);
+      state.value.add(product);
+    } on NotFoundException catch (e) {
+      error.value = e.message;
+    } catch (e) {
+      error.value = e.toString();
+    }
+
+    isLoading.value = false;
+  }
+
+  Future putProduct(Product product) async {
+    isLoading.value = true;
+
+    try {
+      await repository.queryProduct(product, Query.put);
+    } on NotFoundException catch (e) {
+      error.value = e.message;
+    } catch (e) {
+      error.value = e.toString();
+    }
+
+    isLoading.value = false;
+  }
 }

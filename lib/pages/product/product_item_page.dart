@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:market_mobile/mixins/validator_mixins.dart';
 import 'package:market_mobile/models/product.dart';
 
+// TODO: Talvez "blindar" o código de barras para não ser possível editar
+
 class ProductItemPage extends StatefulWidget {
   const ProductItemPage({super.key, this.product});
 
@@ -11,8 +13,6 @@ class ProductItemPage extends StatefulWidget {
   @override
   State<ProductItemPage> createState() => _ProductItemPageState();
 }
-
-// TODO: Criar toda a página para adicionar / editar um produto existente
 
 class _ProductItemPageState extends State<ProductItemPage>
     with ValidationsMixin {
@@ -33,6 +33,11 @@ class _ProductItemPageState extends State<ProductItemPage>
       editedProduct = Product(name: "", price: 0);
     } else {
       editedProduct = widget.product!;
+
+      nameController.text = editedProduct.name;
+      priceController.text = editedProduct.price.toString();
+      barCodeController.text = editedProduct.barCode ?? "";
+      descriptionController.text = editedProduct.description ?? "";
     }
   }
 
@@ -156,7 +161,7 @@ class _ProductItemPageState extends State<ProductItemPage>
                     ElevatedButton(
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
-                          // print("")
+                            Navigator.pop(context, editedProduct);
                         }
                       },
                       child: const Text(

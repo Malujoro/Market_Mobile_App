@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:market_mobile/pages/my_app.dart';
+import 'package:market_mobile/pages/navigation/profile_page.dart';
 
 void main() {
   runApp(
     MaterialApp(
-      home: const MyApp(),
+      home: const ProfilePage(),
       // home: const ProductItemPage(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
