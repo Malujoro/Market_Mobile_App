@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:market_mobile/mixins/dialogue_mixins.dart';
 import 'package:market_mobile/mixins/validator_mixins.dart';
 import 'package:market_mobile/models/product.dart';
 
@@ -12,7 +13,7 @@ class ProductItemPage extends StatefulWidget {
 }
 
 class _ProductItemPageState extends State<ProductItemPage>
-    with ValidationsMixin {
+    with ValidationsMixin, DialogueMixins {
   late Product editedProduct;
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -47,8 +48,13 @@ class _ProductItemPageState extends State<ProductItemPage>
           if (didPop) {
             return;
           }
-          final bool shouldPop = await requestPop();
-          if (shouldPop) {
+          if (userEdited) {
+            goBackDialogue(
+              context: context,
+              title: "Descartar Alterações?",
+              content: "Se sair as alterações serão perdidas!",
+            );
+          } else {
             Navigator.pop(context);
           }
         },
@@ -99,7 +105,9 @@ class _ProductItemPageState extends State<ProductItemPage>
                       ]),
                       onChanged: (value) {
                         userEdited = true;
-                        editedProduct.name = value;
+                        setState(() {
+                          editedProduct.name = value;
+                        });
                       },
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(100),
@@ -177,49 +185,5 @@ class _ProductItemPageState extends State<ProductItemPage>
         ),
       ),
     );
-  }
-
-  Future<bool> requestPop() {
-    if (userEdited) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text(
-              "Descartar Alterações?",
-              style: TextStyle(fontSize: 25),
-            ),
-            content: const Text(
-              "Se sair as alterações serão perdidas!",
-              style: TextStyle(fontSize: 20),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  "Cancelar",
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  "Sim",
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-            ],
-          );
-        },
-      );
-      return Future.value(false);
-    } else {
-      return Future.value(true);
-    }
   }
 }

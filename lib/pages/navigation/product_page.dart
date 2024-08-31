@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:market_mobile/models/product.dart';
-import 'package:market_mobile/pages/product/product_store.dart';
+import 'package:market_mobile/stores/product_store.dart';
 
 // TODO: Criar o deleteProduct (para excluir ele do banco)
 // TODO: Fazer o sistema de busca de produtos
@@ -89,13 +90,37 @@ class _ProductPageState extends State<ProductPage> {
                     children: [
                       for (Product product in store.state.value)
                         if (searchController.text.isEmpty ||
-                            product.name.toLowerCase().contains(searchController.text.toLowerCase()))
+                            product.name
+                                .toLowerCase()
+                                .contains(searchController.text.toLowerCase()))
                           GestureDetector(
                             onTap: () {
                               widget.showProductItemPage(product: product);
                             },
-                            child: Card(
-                              child: product.productWidget(richTextCreator),
+                            child: Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: Slidable(
+                                endActionPane: ActionPane(
+                                    extentRatio: 0.3,
+                                    motion: const DrawerMotion(),
+                                    children: [
+                                      SlidableAction(
+                                        onPressed: (BuildContext context) {
+                                          showDialogDeleteProduct(product);
+                                          // deleteProduct(product);
+                                        },
+                                        backgroundColor: Colors.red,
+                                        foregroundColor: Colors.white,
+                                        icon: Icons.delete,
+                                        label: "Excluir",
+                                        borderRadius: const BorderRadius.only(
+                                          topRight: Radius.circular(16),
+                                          bottomRight: Radius.circular(16),
+                                        ),
+                                      )
+                                    ]),
+                                child: product.productWidget(richTextCreator),
+                              ),
                             ),
                           ),
                     ],
@@ -120,5 +145,38 @@ class _ProductPageState extends State<ProductPage> {
         ],
       ),
     );
+  }
+
+  void showDialogDeleteProduct(Product product) {
+    showDialog(
+      context: context,
+      builder: (BuildContext builder) {
+        return AlertDialog(
+          title: const Text("Excluir produto?"),
+          content: const Text(
+              "Você deseja excluir o produto? é uma ação irreversível"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(builder).pop();
+              },
+              child: const Text("Cancelar"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(builder).pop();
+                deleteProduct(product);
+              },
+              child: const Text("Sim"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void deleteProduct(Product product) {
+    store.deleteProduct(product.barCode);
+    store.state.value.remove(product);
   }
 }

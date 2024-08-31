@@ -191,7 +191,7 @@ class _ProfilePageState extends State<ProfilePage> with ValidationsMixin {
       Uri.parse('https://marketmobile-api.onrender.com/auth/login'),
     );
     request.body = json.encode({
-      "email": email,
+      "email": email.toLowerCase(),
       "password": password,
     });
     request.headers.addAll(headers);
@@ -219,7 +219,7 @@ class _ProfilePageState extends State<ProfilePage> with ValidationsMixin {
       Uri.parse('https://marketmobile-api.onrender.com/auth/register'),
     );
     request.body = json.encode({
-      "email": email,
+      "email": email.toLowerCase(),
       "password": password,
       "role": "USER",
     });

@@ -24,26 +24,35 @@ class Product {
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> mapa = {
-      "barCode" : barCode,
-      "name" : name,
-      "description" : description,
-      "price" : price,
+      "barCode": barCode,
+      "name": name,
+      "description": description,
+      "price": price,
     };
     return mapa;
   }
 
 // TODO: Talvez utilizar o deslizar para excluir um produto
   Widget productWidget(Function richTextCreator) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          richTextCreator("Código: ", barCode),
-          richTextCreator("Nome: ", name),
-          richTextCreator("Preço: ", "R\$${price.toStringAsFixed(2)}"),
-          richTextCreator("Descrição: ", description),
-        ],
+    return Card(
+      margin: const EdgeInsets.only(bottom: 0.7),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          bottomLeft: Radius.circular(16),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            richTextCreator("Código: ", barCode),
+            richTextCreator("Nome: ", name),
+            richTextCreator("Preço: ", "R\$${price.toStringAsFixed(2)}"),
+            richTextCreator("Descrição: ", description),
+          ],
+        ),
       ),
     );
   }

@@ -62,6 +62,20 @@ class ProductStore {
     isLoading.value = false;
   }
 
+  Future<void> deleteProduct(String barCode) async {
+    isLoading.value = true;
+
+    try {
+      await repository.deleteProduct(barCode);
+    } on NotFoundException catch (e) {
+      error.value = e.message;
+    } catch (e) {
+      error.value = e.toString();
+    }
+
+    isLoading.value = false;
+  }
+
   void orderNameAsc() {
     state.value
         .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));

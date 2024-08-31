@@ -11,6 +11,7 @@ enum Query { put, post }
 abstract class InterfaceProductRepository {
   Future<List<Product>> getAllProducts();
   Future<void> queryProduct(Product product, Query type);
+  Future<void> deleteProduct(String barCode);
 }
 
 class ProductRepository implements InterfaceProductRepository {
@@ -57,6 +58,23 @@ class ProductRepository implements InterfaceProductRepository {
       token: jwt,
       map: product.toMap(),
       type: query,
+    );
+
+    if (response == 200) {
+      return;
+    } else if (response == 404) {
+      throw NotFoundException("A URL informada não é válida");
+    } else {
+      throw Exception("Não foi possível carregar os produtos");
+    }
+  }
+
+  @override
+  Future<void> deleteProduct(String barCode) async {
+    final response = await client.delete(
+      url: productUrl,
+      token: jwt,
+      barCode: barCode,
     );
 
     if (response == 200) {

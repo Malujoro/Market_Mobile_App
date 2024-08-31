@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:market_mobile/pages/navigation/profile_page.dart';
+import 'package:market_mobile/pages/profile/profile_page.dart';
 
 void main() {
   runApp(
