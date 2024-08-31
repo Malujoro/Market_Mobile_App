@@ -108,8 +108,11 @@ class _ProfilePageState extends State<ProfilePage> with ValidationsMixin {
                                     emailController.text,
                                     passwordController.text);
 
+                                // var jwt = await storage.read(key: 'jwt');
+
                                 if (jwt != null) {
-                                  storage.write(key: 'jwt', value: jwt);
+                                  // storage.write(key: 'jwt', value: jwt);
+                                  print(jwt);
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -184,6 +187,10 @@ class _ProfilePageState extends State<ProfilePage> with ValidationsMixin {
     String email,
     String password,
   ) async {
+
+    // if(tokenValid)
+    //   return token;
+
     isLoading.value = true;
     Map<String, String> headers = {'Content-Type': 'application/json'};
     var request = http.Request(

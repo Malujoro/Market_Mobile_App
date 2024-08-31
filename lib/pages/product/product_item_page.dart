@@ -60,10 +60,9 @@ class _ProductItemPageState extends State<ProductItemPage>
         },
         child: Scaffold(
           appBar: AppBar(
-            title: widget.product == null
-                ? const Text("Produto",
-                    style: TextStyle(fontWeight: FontWeight.bold))
-                : Text(editedProduct.name),
+            title: Text(
+                editedProduct.name.isEmpty ? "Produto" : editedProduct.name,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             centerTitle: true,
           ),
           body: Center(
