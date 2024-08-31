@@ -13,7 +13,7 @@ import 'package:market_mobile/repositories/repository.dart';
 
 // const Color.fromARGB(255, 243, 236, 245)
 
-// TODO: Talvez utilizar o deslizar para excluir um produto
+// TODO: Talvez criar uma ação no Appbar para escolher como ordenar produtos e/ou vendas
 // TODO: Criar toda a página de vendas
 
 class MyApp extends StatefulWidget {
@@ -129,7 +129,7 @@ class _MyAppState extends State<MyApp> {
       }
     }
     setState(() {
-      store.getProducts();
+      store.getProducts(Order.ascAZ);
     });
   }
 }

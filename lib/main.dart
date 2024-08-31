@@ -5,7 +5,6 @@ void main() {
   runApp(
     MaterialApp(
       home: const ProfilePage(),
-      // home: const ProductItemPage(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         floatingActionButtonTheme: const FloatingActionButtonThemeData(

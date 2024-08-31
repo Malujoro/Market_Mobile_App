@@ -3,13 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:market_mobile/mixins/validator_mixins.dart';
 import 'package:market_mobile/models/product.dart';
 
-// TODO: Talvez "blindar" o código de barras para não ser possível editar
-
 class ProductItemPage extends StatefulWidget {
   const ProductItemPage({super.key, this.product});
 
   final Product? product;
-  // widget.product
   @override
   State<ProductItemPage> createState() => _ProductItemPageState();
 }
@@ -30,14 +27,14 @@ class _ProductItemPageState extends State<ProductItemPage>
   void initState() {
     super.initState();
     if (widget.product == null) {
-      editedProduct = Product(name: "", price: 0);
+      editedProduct = Product(name: "", price: 0, barCode: '');
     } else {
       editedProduct = widget.product!;
 
       nameController.text = editedProduct.name;
       priceController.text = editedProduct.price.toString();
-      barCodeController.text = editedProduct.barCode ?? "";
-      descriptionController.text = editedProduct.description ?? "";
+      barCodeController.text = editedProduct.barCode;
+      descriptionController.text = editedProduct.description;
     }
   }
 
@@ -72,18 +69,20 @@ class _ProductItemPageState extends State<ProductItemPage>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextFormField(
+                      readOnly: widget.product != null,
                       controller: barCodeController,
-                      keyboardType: TextInputType.text,
-                      validator: (value) => minLength(
-                        value,
-                        12,
-                        "O código de barras deve ter 12 dígitos",
-                      ),
+                      keyboardType: TextInputType.number,
+                      validator: (value) => combine([
+                        () => isNotEmpty(value),
+                        () => minLength(value, 12,
+                            "O código de barras deve ter 12 dígitos"),
+                      ]),
                       onChanged: (value) {
                         userEdited = true;
                         editedProduct.barCode = value;
                       },
                       inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
                         LengthLimitingTextInputFormatter(12),
                       ],
                       decoration: const InputDecoration(
@@ -161,7 +160,7 @@ class _ProductItemPageState extends State<ProductItemPage>
                     ElevatedButton(
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
-                            Navigator.pop(context, editedProduct);
+                          Navigator.pop(context, editedProduct);
                         }
                       },
                       child: const Text(

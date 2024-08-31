@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
 class Product {
-  String? barCode;
+  late String barCode;
   late String name;
-  String? description;
+  String description;
   late double price;
 
   Product({
-    this.barCode,
+    required this.barCode,
     required this.name,
-    this.description,
+    this.description = "",
     required this.price,
   });
 
@@ -32,16 +32,17 @@ class Product {
     return mapa;
   }
 
+// TODO: Talvez utilizar o deslizar para excluir um produto
   Widget productWidget(Function richTextCreator) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          richTextCreator("Código: ", "$barCode"),
+          richTextCreator("Código: ", barCode),
           richTextCreator("Nome: ", name),
           richTextCreator("Preço: ", "R\$${price.toStringAsFixed(2)}"),
-          richTextCreator("Descrição: ", "$description"),
+          richTextCreator("Descrição: ", description),
         ],
       ),
     );

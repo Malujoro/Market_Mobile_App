@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:market_mobile/models/product.dart';
 import 'package:market_mobile/pages/product/product_store.dart';
 
 // TODO: Criar o deleteProduct (para excluir ele do banco)
-// TODO: Fazer uma ordenação alfabética ("Padrão") pelo nome do produto
 // TODO: Fazer o sistema de busca de produtos
 
 class ProductPage extends StatefulWidget {
-  const ProductPage({super.key, required this.store, required this.showProductItemPage});
+  const ProductPage(
+      {super.key, required this.store, required this.showProductItemPage});
 
   final ProductStore store;
   final Function({Product? product}) showProductItemPage;
@@ -18,6 +19,8 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   late final ProductStore store;
+
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -59,12 +62,16 @@ class _ProductPageState extends State<ProductPage> {
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: TextField(
-                  decoration: InputDecoration(
-                    suffixIcon: IconButton(
-                        onPressed: () {
-                          print("Search");
-                        },
-                        icon: const Icon(Icons.search)),
+                  controller: searchController,
+                  keyboardType: TextInputType.text,
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(100),
+                  ],
+                  decoration: const InputDecoration(
+                    suffixIcon: Icon(Icons.search),
                     labelText: "Pesquisar produto",
                   ),
                 ),
@@ -81,14 +88,16 @@ class _ProductPageState extends State<ProductPage> {
                     shrinkWrap: true,
                     children: [
                       for (Product product in store.state.value)
-                        GestureDetector(
-                          onTap: () {
-                            widget.showProductItemPage(product: product);
-                          },
-                          child: Card(
-                            child: product.productWidget(richTextCreator),
+                        if (searchController.text.isEmpty ||
+                            product.name.toLowerCase().contains(searchController.text.toLowerCase()))
+                          GestureDetector(
+                            onTap: () {
+                              widget.showProductItemPage(product: product);
+                            },
+                            child: Card(
+                              child: product.productWidget(richTextCreator),
+                            ),
                           ),
-                        ),
                     ],
                   ),
                 ),
