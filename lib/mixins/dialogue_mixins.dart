@@ -6,7 +6,8 @@ mixin DialogueMixins {
       required String title,
       required String content,
       String cancel = "Cancelar",
-      String confirm = "Sim"}) {
+      String confirm = "Sim",
+      Function? confirmFunc}) {
     showDialog(
       context: context,
       builder: (context) {
@@ -33,6 +34,9 @@ mixin DialogueMixins {
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
+                if(confirmFunc != null) {
+                  confirmFunc();
+                }
               },
               child: Text(
                 confirm,

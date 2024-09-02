@@ -52,7 +52,6 @@ class _LoginPageState extends State<LoginPage> with ValidationsMixin, TokenMixin
               );
             }
 
-            tokenSet("");
             return Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
