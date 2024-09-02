@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:market_mobile/http/http_client.dart';
 import 'package:flutter/material.dart';
 import 'package:market_mobile/mixins/dialogue_mixins.dart';
+import 'package:market_mobile/mixins/token_mixins.dart';
 import 'package:market_mobile/models/product.dart';
 import 'package:market_mobile/pages/navigation/home_page.dart';
 import 'package:market_mobile/pages/navigation/insights_page.dart';
@@ -40,7 +41,7 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> with DialogueMixins {
+class _MyAppState extends State<MyApp> with DialogueMixins, TokenMixins {
   _MyAppState();
 
   int currentPageIndex = 0;
@@ -72,7 +73,6 @@ class _MyAppState extends State<MyApp> with DialogueMixins {
             title: "Efetuar logout?",
             content: "Você irá voltar para a tela de login",
           );
-          print("Voltou");
         },
         child: Scaffold(
           appBar: AppBar(

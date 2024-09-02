@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:market_mobile/pages/profile/profile_page.dart';
+import 'package:market_mobile/pages/login/login_page.dart';
 
 void main() {
   runApp(
     MaterialApp(
-      home: const ProfilePage(),
+      home: const LoginPage(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         floatingActionButtonTheme: const FloatingActionButtonThemeData(

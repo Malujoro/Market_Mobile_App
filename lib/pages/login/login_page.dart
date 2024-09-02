@@ -9,14 +9,14 @@ import 'package:market_mobile/mixins/validator_mixins.dart';
 import 'package:http/http.dart' as http;
 import 'package:market_mobile/pages/my_app.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> with ValidationsMixin, TokenMixins {
+class _LoginPageState extends State<LoginPage> with ValidationsMixin, TokenMixins {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
@@ -52,6 +52,7 @@ class _ProfilePageState extends State<ProfilePage> with ValidationsMixin, TokenM
               );
             }
 
+            tokenSet("");
             return Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
