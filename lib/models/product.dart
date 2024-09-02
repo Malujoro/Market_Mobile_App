@@ -32,7 +32,6 @@ class Product {
     return mapa;
   }
 
-// TODO: Talvez utilizar o deslizar para excluir um produto
   Widget productWidget(Function richTextCreator) {
     return Card(
       margin: const EdgeInsets.only(bottom: 0.7),

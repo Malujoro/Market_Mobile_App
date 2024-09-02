@@ -4,9 +4,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:market_mobile/models/product.dart';
 import 'package:market_mobile/stores/product_store.dart';
 
-// TODO: Criar o deleteProduct (para excluir ele do banco)
-// TODO: Fazer o sistema de busca de produtos
-
 class ProductPage extends StatefulWidget {
   const ProductPage(
       {super.key, required this.store, required this.showProductItemPage});
