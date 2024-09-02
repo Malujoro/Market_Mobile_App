@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+// import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:market_mobile/mixins/token_mixins.dart';
 import 'package:market_mobile/mixins/validator_mixins.dart';
 import 'package:http/http.dart' as http;
 import 'package:market_mobile/pages/my_app.dart';
@@ -14,19 +16,28 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> with ValidationsMixin {
+class _ProfilePageState extends State<ProfilePage> with ValidationsMixin, TokenMixins {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
 
-  final storage = const FlutterSecureStorage();
+  // final storage = const FlutterSecureStorage();
 
   TextEditingController emailController = TextEditingController();
+  TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
   bool passwordVisible = false;
   bool userEdited = false;
   bool register = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      loginAuto();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +65,8 @@ class _ProfilePageState extends State<ProfilePage> with ValidationsMixin {
                         keyboardType: TextInputType.emailAddress,
                         validator: (value) => combine([
                           () => isNotEmpty(value),
+                          () => minLength(value, 2),
                           // () => emailValid(value),
-                          // () => minLength(value, 2),
                         ]),
                         onChanged: (value) {
                           userEdited = true;
@@ -66,6 +77,28 @@ class _ProfilePageState extends State<ProfilePage> with ValidationsMixin {
                         decoration: const InputDecoration(
                           prefixIcon: Icon(Icons.email),
                           labelText: "Email",
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Visibility(
+                        visible: register,
+                        child: TextFormField(
+                          controller: usernameController,
+                          keyboardType: TextInputType.text,
+                          validator: (value) => combine([
+                            () => isNotEmpty(value),
+                            () => minLength(value, 2),
+                          ]),
+                          onChanged: (value) {
+                            userEdited = true;
+                          },
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(100),
+                          ],
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.person),
+                            labelText: "Nome de usuário",
+                          ),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -103,21 +136,22 @@ class _ProfilePageState extends State<ProfilePage> with ValidationsMixin {
                         children: [
                           ElevatedButton(
                             onPressed: () async {
+                              if (register) {
+                                setState(() {
+                                  register = false;
+                                });
+                                return;
+                              }
+
                               if (formKey.currentState!.validate()) {
                                 var jwt = await attemptLogin(
                                     emailController.text,
                                     passwordController.text);
 
-                                // var jwt = await storage.read(key: 'jwt');
-
                                 if (jwt != null) {
+                                  tokenSet(jwt);
                                   // storage.write(key: 'jwt', value: jwt);
-                                  print(jwt);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              MyApp.fromBase64(jwt)));
+                                  goToMyApp(jwt);
                                 } else {
                                   displayDialog(
                                     context,
@@ -138,9 +172,17 @@ class _ProfilePageState extends State<ProfilePage> with ValidationsMixin {
                           const SizedBox(width: 30),
                           ElevatedButton(
                             onPressed: () async {
+                              if (!register) {
+                                setState(() {
+                                  register = true;
+                                });
+                                return;
+                              }
+
                               if (formKey.currentState!.validate()) {
                                 int code = await attemptRegister(
                                     emailController.text,
+                                    usernameController.text,
                                     passwordController.text);
                                 if (code == 200) {
                                   displayDialog(
@@ -151,7 +193,8 @@ class _ProfilePageState extends State<ProfilePage> with ValidationsMixin {
                                 } else if (code == 400) {
                                   displayDialog(
                                       context,
-                                      const Text("Email já cadastrado"),
+                                      const Text(
+                                          "Email já cadastrado"),
                                       const Text(
                                           "Utilize outro email ou efetue login se já possuir uma conta"));
                                 } else {
@@ -183,13 +226,27 @@ class _ProfilePageState extends State<ProfilePage> with ValidationsMixin {
     );
   }
 
+  void goToMyApp(String jwt) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => MyApp.fromBase64(jwt)));
+  }
+
+  Future<void> loginAuto() async {
+    var jwt = await tokenGet();
+    // var jwt = await storage.read(key: 'jwt');
+
+    if (jwt != null && jwt.isNotEmpty) {
+      bool expired = JwtDecoder.isExpired(jwt);
+      if (!expired) {
+        goToMyApp(jwt);
+      }
+    }
+  }
+
   Future<String?> attemptLogin(
     String email,
     String password,
   ) async {
-
-    // if(tokenValid)
-    //   return token;
 
     isLoading.value = true;
     Map<String, String> headers = {'Content-Type': 'application/json'};
@@ -217,6 +274,7 @@ class _ProfilePageState extends State<ProfilePage> with ValidationsMixin {
 
   Future<int> attemptRegister(
     String email,
+    String username,
     String password,
   ) async {
     isLoading.value = true;
@@ -227,8 +285,8 @@ class _ProfilePageState extends State<ProfilePage> with ValidationsMixin {
     );
     request.body = json.encode({
       "email": email.toLowerCase(),
+      "username": username,
       "password": password,
-      "role": "USER",
     });
     request.headers.addAll(headers);
 

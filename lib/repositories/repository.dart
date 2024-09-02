@@ -12,6 +12,7 @@ abstract class InterfaceProductRepository {
   Future<List<Product>> getAllProducts();
   Future<void> queryProduct(Product product, Query type);
   Future<void> deleteProduct(String barCode);
+  bool verifyQuery(int responseCode);
 }
 
 class ProductRepository implements InterfaceProductRepository {
@@ -24,7 +25,7 @@ class ProductRepository implements InterfaceProductRepository {
   Future<List<Product>> getAllProducts() async {
     final response = await client.get(url: productUrl, token: jwt);
 
-    if (response.statusCode == 200) {
+    if (verifyQuery(response.statusCode)) {
       final List<Product> products = [];
 
       final body = jsonDecode(response.body);
@@ -36,11 +37,8 @@ class ProductRepository implements InterfaceProductRepository {
         },
       ).toList();
       return products;
-    } else if (response.statusCode == 404) {
-      throw NotFoundException("A URL informada não é válida");
-    } else {
-      throw Exception("Não foi possível carregar os produtos");
     }
+    return [];
   }
 
   @override
@@ -60,13 +58,7 @@ class ProductRepository implements InterfaceProductRepository {
       type: query,
     );
 
-    if (response == 200) {
-      return;
-    } else if (response == 404) {
-      throw NotFoundException("A URL informada não é válida");
-    } else {
-      throw Exception("Não foi possível carregar os produtos");
-    }
+    verifyQuery(response);
   }
 
   @override
@@ -77,10 +69,17 @@ class ProductRepository implements InterfaceProductRepository {
       barCode: barCode,
     );
 
-    if (response == 200) {
-      return;
-    } else if (response == 404) {
+    verifyQuery(response);
+  }
+
+  @override
+  bool verifyQuery(int responseCode) {
+    if (responseCode == 200) {
+      return true;
+    } else if (responseCode == 404) {
       throw NotFoundException("A URL informada não é válida");
+    } else if (responseCode == 401) {
+      throw NotFoundException("Sessão expirada");
     } else {
       throw Exception("Não foi possível carregar os produtos");
     }

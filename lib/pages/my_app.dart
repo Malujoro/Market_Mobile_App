@@ -72,6 +72,7 @@ class _MyAppState extends State<MyApp> with DialogueMixins {
             title: "Efetuar logout?",
             content: "Você irá voltar para a tela de login",
           );
+          print("Voltou");
         },
         child: Scaffold(
           appBar: AppBar(

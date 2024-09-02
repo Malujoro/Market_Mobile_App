@@ -4,3 +4,9 @@ class NotFoundException implements Exception {
 
   NotFoundException(this.message);
 }
+
+class ExpiredToken implements Exception {
+  final String message;
+
+  ExpiredToken(this.message);
+}
