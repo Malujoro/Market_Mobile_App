@@ -45,12 +45,12 @@ class _MyAppState extends State<MyApp> with DialogueMixins, TokenMixins {
 
   int currentPageIndex = 0;
 
-  late ProductStore store;
+  late ProductStore productStore;
 
   @override
   void initState() {
     super.initState();
-    store = ProductStore(
+    productStore = ProductStore(
       repository: ProductRepository(
         client: HttpClient(),
         jwt: widget.jwt,
@@ -80,18 +80,19 @@ class _MyAppState extends State<MyApp> with DialogueMixins, TokenMixins {
           appBar: AppBar(
             title: const Text("Logo"),
           ),
-          floatingActionButton: currentPageIndex != 2 || store.isLoading.value
-              ? null
-              : SizedBox(
-                  width: 75,
-                  height: 75,
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      showProductItemPage();
-                    },
-                    child: const Icon(Icons.add, size: 64),
-                  ),
-                ),
+          floatingActionButton:
+              currentPageIndex != 2 || productStore.isLoading.value
+                  ? null
+                  : SizedBox(
+                      width: 75,
+                      height: 75,
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          showProductItemPage();
+                        },
+                        child: const Icon(Icons.add, size: 64),
+                      ),
+                    ),
           bottomNavigationBar: NavigationBar(
             onDestinationSelected: (int index) {
               setState(() {
@@ -120,10 +121,13 @@ class _MyAppState extends State<MyApp> with DialogueMixins, TokenMixins {
           ),
           body: Center(
             child: [
-              const HomePage(),
+              HomePage(
+                productStore: productStore,
+              ),
               const InsightsPage(),
               ProductPage(
-                  store: store, showProductItemPage: showProductItemPage),
+                  store: productStore,
+                  showProductItemPage: showProductItemPage),
               const UserPage(),
             ][currentPageIndex],
           ),
@@ -143,13 +147,13 @@ class _MyAppState extends State<MyApp> with DialogueMixins, TokenMixins {
     );
     if (retProduct != null) {
       if (product != null) {
-        await store.putProduct(retProduct);
+        await productStore.putProduct(retProduct);
       } else {
-        await store.postProduct(retProduct);
+        await productStore.postProduct(retProduct);
       }
     }
     setState(() {
-      store.getProducts(Order.ascAZ);
+      productStore.getProducts(Order.ascAZ);
     });
   }
 }
