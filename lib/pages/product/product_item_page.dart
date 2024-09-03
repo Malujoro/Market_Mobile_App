@@ -75,6 +75,7 @@ class _ProductItemPageState extends State<ProductItemPage>
                   children: [
                     TextFormField(
                       readOnly: widget.product != null,
+                      enabled: widget.product == null,
                       controller: barCodeController,
                       keyboardType: TextInputType.number,
                       validator: (value) => combine([
@@ -110,6 +111,7 @@ class _ProductItemPageState extends State<ProductItemPage>
                       },
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(100),
+                        FilteringTextInputFormatter.allow(RegExp("[a-z A-Z 0-9]"))
                       ],
                       decoration: const InputDecoration(
                         labelText: "Nome do Produto",
@@ -158,6 +160,7 @@ class _ProductItemPageState extends State<ProductItemPage>
                       },
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(100),
+                        FilteringTextInputFormatter.allow(RegExp("[a-z A-Z 0-9]"))
                       ],
                       decoration: const InputDecoration(
                         labelText: "Descrição",

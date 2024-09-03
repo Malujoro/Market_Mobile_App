@@ -6,12 +6,10 @@ mixin TokenMixins {
 
   void tokenSet(String jwt) {
     storage.write(key: key, value: jwt);
-    print(jwt);
   }
 
   Future<String?> tokenGet() async {
     var jwt = await storage.read(key: key);
-    print(jwt);
     return jwt;
   }
 }

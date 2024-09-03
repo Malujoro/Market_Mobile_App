@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:market_mobile/http/exceptions.dart';
+import 'package:market_mobile/mixins/query_mixins.dart';
 import 'package:market_mobile/http/http_client.dart';
 import 'package:market_mobile/models/product.dart';
 
-const String productUrl = "https://marketmobile-api.onrender.com/product";
+const String url = "https://marketmobile-api.onrender.com/product";
 
 enum Query { put, post }
 
@@ -12,10 +12,9 @@ abstract class InterfaceProductRepository {
   Future<List<Product>> getAllProducts();
   Future<void> queryProduct(Product product, Query type);
   Future<void> deleteProduct(String barCode);
-  bool verifyQuery(int responseCode);
 }
 
-class ProductRepository implements InterfaceProductRepository {
+class ProductRepository with QueryMixins implements InterfaceProductRepository {
   final InterfaceHttpClient client;
   final String jwt;
 
@@ -23,7 +22,7 @@ class ProductRepository implements InterfaceProductRepository {
 
   @override
   Future<List<Product>> getAllProducts() async {
-    final response = await client.get(url: productUrl, token: jwt);
+    final response = await client.get(url: url, token: jwt);
 
     if (verifyQuery(response.statusCode)) {
       final List<Product> products = [];
@@ -52,7 +51,7 @@ class ProductRepository implements InterfaceProductRepository {
     }
 
     final response = await client.query(
-      url: productUrl,
+      url: url,
       token: jwt,
       map: product.toMap(),
       type: query,
@@ -64,24 +63,11 @@ class ProductRepository implements InterfaceProductRepository {
   @override
   Future<void> deleteProduct(String barCode) async {
     final response = await client.delete(
-      url: productUrl,
+      url: url,
       token: jwt,
-      barCode: barCode,
+      id: barCode,
     );
 
     verifyQuery(response);
-  }
-
-  @override
-  bool verifyQuery(int responseCode) {
-    if (responseCode == 200) {
-      return true;
-    } else if (responseCode == 404) {
-      throw NotFoundException("A URL informada não é válida");
-    } else if (responseCode == 401) {
-      throw NotFoundException("Sessão expirada");
-    } else {
-      throw Exception("Não foi possível carregar os produtos");
-    }
   }
 }

@@ -22,40 +22,36 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   void initState() {
-    store = widget.store;
     super.initState();
-    store.getProducts();
+    store = widget.store;
+    if(store.state.value.isEmpty) {
+      store.getProducts();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: Listenable.merge([
-        store.isLoading,
-        store.error,
-        store.state,
-      ]),
-      builder: (context, child) {
-        if (store.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+    return Center(
+      child: AnimatedBuilder(
+        animation: Listenable.merge([
+          store.isLoading,
+          store.error,
+          store.state,
+        ]),
+        builder: (context, child) {
+          if (store.isLoading.value) {
+            return const CircularProgressIndicator();
+          }
 
-        if (store.error.value.isNotEmpty) {
-          return Center(
-            child: Text(store.error.value),
-          );
-        }
+          if (store.error.value.isNotEmpty) {
+            return Text(store.error.value);
+          }
 
-        if (store.state.value.isEmpty) {
-          return const Center(
-            child: Text("Nenhum produto cadastrado"),
-          );
-        }
+          if (store.state.value.isEmpty) {
+            return const Text("Nenhum produto cadastrado");
+          }
 
-        return Center(
-          child: Column(
+          return Column(
             children: [
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -67,6 +63,7 @@ class _ProductPageState extends State<ProductPage> {
                   },
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(100),
+                    FilteringTextInputFormatter.allow(RegExp("[a-z A-Z 0-9]"))
                   ],
                   decoration: const InputDecoration(
                     suffixIcon: Icon(Icons.search),
@@ -125,9 +122,9 @@ class _ProductPageState extends State<ProductPage> {
                 ),
               ),
             ],
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 

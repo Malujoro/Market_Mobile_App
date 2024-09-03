@@ -16,7 +16,7 @@ abstract class InterfaceHttpClient {
   Future delete({
     required String url,
     required String token,
-    required String barCode,
+    required String id,
   });
 }
 
@@ -60,12 +60,12 @@ class HttpClient implements InterfaceHttpClient {
   Future delete({
     required String url,
     required String token,
-    required String barCode,
+    required String id,
   }) async {
     var headers = {
       'Authorization': 'Bearer $token',
     };
-    var request = http.Request('DELETE', Uri.parse("$url/$barCode"));
+    var request = http.Request('DELETE', Uri.parse("$url/$id"));
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();

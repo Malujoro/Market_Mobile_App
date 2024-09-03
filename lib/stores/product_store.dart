@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:market_mobile/http/exceptions.dart';
 import 'package:market_mobile/models/product.dart';
-import 'package:market_mobile/repositories/repository.dart';
+import 'package:market_mobile/repositories/product_repository.dart';
 
 enum Order { ascAZ }
 

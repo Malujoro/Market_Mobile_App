@@ -11,8 +11,7 @@ import 'package:market_mobile/pages/product/product_item_page.dart';
 import 'package:market_mobile/pages/navigation/product_page.dart';
 import 'package:market_mobile/stores/product_store.dart';
 import 'package:market_mobile/pages/navigation/user_page.dart';
-import 'package:market_mobile/repositories/repository.dart';
-
+import 'package:market_mobile/repositories/product_repository.dart';
 // const Color.fromARGB(255, 243, 236, 245)
 
 // TODO: Talvez criar uma ação no Appbar para escolher como ordenar produtos e/ou vendas
@@ -119,12 +118,15 @@ class _MyAppState extends State<MyApp> with DialogueMixins, TokenMixins {
               ),
             ],
           ),
-          body: [
-            const HomePage(),
-            const InsightsPage(),
-            ProductPage(store: store, showProductItemPage: showProductItemPage),
-            const UserPage(),
-          ][currentPageIndex],
+          body: Center(
+            child: [
+              const HomePage(),
+              const InsightsPage(),
+              ProductPage(
+                  store: store, showProductItemPage: showProductItemPage),
+              const UserPage(),
+            ][currentPageIndex],
+          ),
         ),
       ),
     );

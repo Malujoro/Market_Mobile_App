@@ -23,13 +23,13 @@ class Product {
   }
 
   Map<String, dynamic> toMap() {
-    Map<String, dynamic> mapa = {
+    Map<String, dynamic> map = {
       "barCode": barCode,
       "name": name,
       "description": description,
       "price": price,
     };
-    return mapa;
+    return map;
   }
 
   Widget productWidget(Function richTextCreator) {
