@@ -41,15 +41,26 @@ class SaleProduct {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            richTextCreator("Código: ", productBarCode),
-            richTextCreator("Nome: ", productName),
-            richTextCreator("Quantidade: ", quantity),
-            richTextCreator(
-                "Preço parcial: ", "R\$${partialPrice.toStringAsFixed(2)}"),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                richTextCreator("Código: ", productBarCode),
+                richTextCreator("Nome: ", productName),
+              ],
+            ),
+            const SizedBox(width: 25),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                richTextCreator("Quantidade: ", quantity.toString()),
+                richTextCreator(
+                    "Preço parcial: ", "R\$${partialPrice.toStringAsFixed(2)}"),
+              ],
+            ),
           ],
         ),
       ),

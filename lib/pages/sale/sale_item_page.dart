@@ -14,6 +14,10 @@ class SaleItemPage extends StatefulWidget {
   State<SaleItemPage> createState() => _SaleItemPageState();
 }
 
+// TODO adicionar a confirmação de voltar atrás
+// TODO adicionar o botão de finalizar venda (com um diálogo de confirmação) - PostSale
+// TODO Deixar os SaleProducts removíveis (deslizar também)
+
 class _SaleItemPageState extends State<SaleItemPage> with ValidationsMixin {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -24,13 +28,13 @@ class _SaleItemPageState extends State<SaleItemPage> with ValidationsMixin {
 
   bool userEdited = false;
   Product? selectedProduct;
-  SaleProduct saleProduct = SaleProduct(
-      productBarCode: "", productName: "", quantity: 0, partialPrice: 0);
+
+  List<SaleProduct> saleProducts = [];
 
   @override
   void initState() {
     super.initState();
-    partialPriceController.text = "0";
+    reset(partialPrice: true);
   }
 
   @override
@@ -62,8 +66,8 @@ class _SaleItemPageState extends State<SaleItemPage> with ValidationsMixin {
                           child: ListView(
                             shrinkWrap: true,
                             children: [
-                              for (int i = 0; i < 2; i++)
-                                Card(child: Text("Olá mundo $i")),
+                              for (SaleProduct saleProduct in saleProducts)
+                                saleProduct.saleProductWidget(richTextCreator)
                             ],
                           ),
                         ),
@@ -95,8 +99,10 @@ class _SaleItemPageState extends State<SaleItemPage> with ValidationsMixin {
                                 }
                               ]),
                               onChanged: (value) {
-                                nameController.clear();
-                                selectedProduct = null;
+                                reset(
+                                    name: true,
+                                    selectedProduct: true,
+                                    partialPrice: true);
                                 userEdited = true;
                               },
                               onFieldSubmitted: (value) {
@@ -114,10 +120,11 @@ class _SaleItemPageState extends State<SaleItemPage> with ValidationsMixin {
                                     icon: const Icon(Icons.search)),
                                 suffixIcon: IconButton(
                                     onPressed: () {
-                                      barCodeController.clear();
-                                      nameController.clear();
-                                      partialPriceController.text = "0";
-                                      selectedProduct = null;
+                                      reset(
+                                          barCode: true,
+                                          name: true,
+                                          selectedProduct: true,
+                                          partialPrice: true);
                                     },
                                     icon: const Icon(Icons.cancel)),
                                 labelText: "Código de barras",
@@ -145,9 +152,6 @@ class _SaleItemPageState extends State<SaleItemPage> with ValidationsMixin {
                             selectedProduct = product;
                             updatePartialPrice(
                                 product.price, quantityController.text);
-
-                            saleProduct.productBarCode = product.barCode;
-                            saleProduct.productName = product.name;
                           },
                           emptyBuilder: (context) {
                             return const Padding(
@@ -179,13 +183,9 @@ class _SaleItemPageState extends State<SaleItemPage> with ValidationsMixin {
                             () => isPositive(value),
                           ]),
                           onChanged: (value) {
-                            // TODO: Implementar o cálculo do preço parcial do produto de maneira automática
-                            // if notEmpty && != "0"
-                            // int value = int.parse(quantityController.text)
-                            // partialPriceController.text = value * products[index].price
                             userEdited = true;
                             if (value.isEmpty) {
-                              partialPriceController.text = "0";
+                              reset(partialPrice: true);
                             } else if (selectedProduct != null) {
                               updatePartialPrice(selectedProduct!.price, value);
                             }
@@ -211,8 +211,16 @@ class _SaleItemPageState extends State<SaleItemPage> with ValidationsMixin {
                         TextButton(
                           onPressed: () {
                             if (formKey.currentState!.validate()) {
-                              // TODO: Adicionar o produto no fim da lista de produtos da venda
-                              // products.add(product);
+                              SaleProduct saleProduct = SaleProduct(
+                                  productBarCode: selectedProduct!.barCode,
+                                  productName: selectedProduct!.name,
+                                  quantity: int.parse(quantityController.text),
+                                  partialPrice: double.parse(
+                                      partialPriceController.text));
+                              setState(() {
+                                saleProducts.add(saleProduct);
+                              });
+                              reset(all: true);
                             }
                           },
                           child: const Text("Adicionar produto"),
@@ -253,9 +261,6 @@ class _SaleItemPageState extends State<SaleItemPage> with ValidationsMixin {
       selectedProduct = product[0];
       nameController.text = selectedProduct!.name;
 
-      saleProduct.productBarCode = product[0].barCode;
-      saleProduct.productName = product[0].name;
-
       if (quantityController.text.isNotEmpty) {
         updatePartialPrice(product[0].price, quantityController.text);
       }
@@ -264,10 +269,47 @@ class _SaleItemPageState extends State<SaleItemPage> with ValidationsMixin {
 
   void updatePartialPrice(double price, String quantity) {
     if (quantity.isEmpty) {
-      partialPriceController.text = "0";
+      reset(partialPrice: true);
     } else {
       double result = price * double.parse(quantity);
       partialPriceController.text = result.toStringAsFixed(2);
     }
+  }
+
+  void reset(
+      {bool all = false,
+      bool barCode = false,
+      bool name = false,
+      bool quantity = false,
+      bool partialPrice = false,
+      bool selectedProduct = false}) {
+    if (barCode || all) {
+      barCodeController.clear();
+    }
+    if (name || all) {
+      nameController.clear();
+    }
+    if (quantity || all) {
+      quantityController.clear();
+    }
+    if (partialPrice || all) {
+      partialPriceController.text = "0";
+    }
+    if (selectedProduct || all) {
+      this.selectedProduct = null;
+    }
+  }
+
+  Widget richTextCreator(String label, String text) {
+    return RichText(
+      text: TextSpan(
+        style: const TextStyle(color: Colors.black, fontSize: 14, height: 1.4),
+        children: [
+          TextSpan(
+              text: label, style: const TextStyle(fontWeight: FontWeight.bold)),
+          TextSpan(text: text),
+        ],
+      ),
+    );
   }
 }

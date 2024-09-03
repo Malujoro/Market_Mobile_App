@@ -69,8 +69,6 @@ class _HomePageState extends State<HomePage> {
                   onPressed: productStore.state.value.isEmpty
                       ? null
                       : () {
-                          // TODO: Talvez implementar o GetProducts aqui, já que a lista de produtos será necessária para efetuar as vendas
-                          // Fazer um if state.value.isEmpty para carregar os produtos
                           showSaleItemPage(productStore.state.value);
                         },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
