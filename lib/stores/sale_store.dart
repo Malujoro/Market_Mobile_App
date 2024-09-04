@@ -11,14 +11,23 @@ class SaleStore {
   final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
   final ValueNotifier<List<Sale>> state = ValueNotifier<List<Sale>>([]);
   final ValueNotifier<String> error = ValueNotifier<String>("");
-  
+
   SaleStore({required this.repository});
 
-  Future getSales([SaleOrder order = SaleOrder.dateAsc]) async {
+  Future getSales(
+      [DateTime? start,
+      DateTime? end,
+      SaleOrder order = SaleOrder.dateAsc]) async {
     isLoading.value = true;
 
+    late List<Sale> result;
+
     try {
-      final result = await repository.getAllSales();
+      if (start != null && end != null) {
+        result = await repository.getAllSales(start.toIso8601String(), end.toIso8601String());
+      } else {
+        result = await repository.getAllSales();
+      }
       state.value = result;
       switch (order) {
         case SaleOrder.dateAsc:
@@ -63,7 +72,6 @@ class SaleStore {
   }
 
   void orderNameAsc() {
-    state.value
-        .sort((a, b) => a.date.toString().compareTo(b.date.toString()));
+    state.value.sort((a, b) => a.date.toString().compareTo(b.date.toString()));
   }
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:market_mobile/mixins/customize_mixins.dart';
+import 'package:market_mobile/mixins/hour_mixins.dart';
 import 'package:market_mobile/models/sale_product.dart';
 
-class Sale with CustomizeMixins {
+class Sale with CustomizeMixins, HourMixins {
   List<SaleProduct> saleProducts = [];
   double totalPrice = 0;
   late DateTime date;
@@ -53,7 +53,7 @@ class Sale with CustomizeMixins {
             richTextCreator(
                 context: context,
                 label: "Data: ",
-                text: DateFormat('yyyy-MM-dd - kk:mm').format(date)),
+                text: timeToString(date.subtract(const Duration(hours: 3)))),
           ],
         ),
       ),

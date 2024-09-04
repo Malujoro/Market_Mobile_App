@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:market_mobile/mixins/hour_mixins.dart';
 import 'package:market_mobile/models/sale.dart';
-import 'package:market_mobile/models/sale_product.dart';
 import 'package:market_mobile/stores/sale_store.dart';
 
 // TODO: Adicionar as funcionalidades do insight
@@ -26,10 +26,13 @@ class InsightsPage extends StatefulWidget {
   State<InsightsPage> createState() => _InsightsPageState();
 }
 
-class _InsightsPageState extends State<InsightsPage> {
+class _InsightsPageState extends State<InsightsPage> with HourMixins {
   late final SaleStore saleStore;
   late String dropdownValue;
   late int dropdownIndex;
+
+  DateTime? start;
+  DateTime? end;
 
   @override
   void initState() {
@@ -77,6 +80,8 @@ class _InsightsPageState extends State<InsightsPage> {
                         if (value != null) {
                           setState(() {
                             dropdownValue = value;
+                            start = null;
+                            end = null;
                           });
                         }
                       },
@@ -96,6 +101,15 @@ class _InsightsPageState extends State<InsightsPage> {
                     ),
                   ),
                 ],
+              ),
+            ),
+            Visibility(
+              visible: start != null && end != null,
+              child: Text(
+                start == null || end == null
+                    ? ""
+                    : "Vendas de ${timeToString(start!, hour: false)} até ${timeToString(end!, hour: false)}",
+                style: const TextStyle(fontSize: 16),
               ),
             ),
             Flexible(
@@ -124,14 +138,44 @@ class _InsightsPageState extends State<InsightsPage> {
     dropdownIndex = dayList.indexOf(dropdownValue);
     widget.dropdownIndex[0] = dropdownIndex;
 
+    end = DateTime.now().add(
+      const Duration(hours: 3),
+    );
+
     if (dropdownIndex == Day.day.index) {
-      saleStore.state.value = [];
+      start = end!.subtract(
+        const Duration(days: 1),
+      );
+      saleStore.getSales(start, end);
     } else if (dropdownIndex == Day.week.index) {
-      saleStore.state.value = [];
+      start = end!.subtract(
+        const Duration(days: 7),
+      );
+      saleStore.getSales(start, end);
     } else if (dropdownIndex == Day.month.index) {
-      saleStore.state.value = [];
+      start = DateTime(
+        end!.year,
+        end!.month - 1,
+        end!.day,
+        end!.hour,
+        end!.minute,
+        end!.second,
+        end!.millisecond,
+        end!.microsecond,
+      );
+      saleStore.getSales(start, end);
     } else if (dropdownIndex == Day.year.index) {
-      saleStore.state.value = [];
+      start = DateTime(
+        end!.year - 1,
+        end!.month,
+        end!.day,
+        end!.hour,
+        end!.minute,
+        end!.second,
+        end!.millisecond,
+        end!.microsecond,
+      );
+      saleStore.getSales(start, end);
     } else if (dropdownIndex == Day.all.index) {
       saleStore.getSales();
     } else {
