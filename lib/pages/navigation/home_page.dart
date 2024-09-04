@@ -43,7 +43,6 @@ class _HomePageState extends State<HomePage> {
 
           saleStore.isLoading,
           saleStore.error,
-          // TODO: Adicionar os de Sale também
         ]),
         builder: (context, child) {
           if (productStore.isLoading.value || saleStore.isLoading.value) {

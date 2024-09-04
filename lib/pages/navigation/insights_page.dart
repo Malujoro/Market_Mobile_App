@@ -3,8 +3,6 @@ import 'package:market_mobile/mixins/hour_mixins.dart';
 import 'package:market_mobile/models/sale.dart';
 import 'package:market_mobile/stores/sale_store.dart';
 
-// TODO: Adicionar as funcionalidades do insight
-
 enum Day { day, week, month, year, all }
 
 List<String> dayList = [
@@ -40,6 +38,9 @@ class _InsightsPageState extends State<InsightsPage> with HourMixins {
     saleStore = widget.saleStore;
     dropdownIndex = widget.dropdownIndex[0];
     dropdownValue = dayList[dropdownIndex];
+    if (saleStore.state.value.isEmpty) {
+      loadSales();
+    }
   }
 
   @override
@@ -83,6 +84,7 @@ class _InsightsPageState extends State<InsightsPage> with HourMixins {
                             start = null;
                             end = null;
                           });
+                          loadSales();
                         }
                       },
                       items: [
@@ -92,8 +94,20 @@ class _InsightsPageState extends State<InsightsPage> with HourMixins {
                       ]),
                   const SizedBox(width: 60),
                   GestureDetector(
-                    onTap: () {
-                      print("Calendário Tocado");
+                    onTap: () async {
+                      DateTimeRange? result = await showDateRangePicker(
+                        context: context,
+                        firstDate: DateTime(2000), // the earliest allowable
+                        lastDate: DateTime(2999), // the latest allowable
+                        currentDate: DateTime.now(),
+                        errorFormatText: "dia/mês/ano",
+                        keyboardType: TextInputType.text,
+                      );
+                      if (result != null) {
+                        start = result.start;
+                        end = result.end;
+                        saleStore.getSales(start, end);
+                      }
                     },
                     child: const Icon(
                       Icons.calendar_today,
@@ -123,7 +137,17 @@ class _InsightsPageState extends State<InsightsPage> with HourMixins {
                 child: ListView(
                   padding: const EdgeInsets.all(16),
                   shrinkWrap: true,
-                  children: showSales(),
+                  children: saleStore.state.value.isEmpty
+                      ? const [
+                          Text(
+                            "Nenhuma venda nesta data",
+                            textAlign: TextAlign.center,
+                          )
+                        ]
+                      : [
+                          for (Sale sale in saleStore.state.value)
+                            sale.productWidget(context)
+                        ],
                 ),
               ),
             ),
@@ -133,10 +157,14 @@ class _InsightsPageState extends State<InsightsPage> with HourMixins {
     );
   }
 
-  List<Widget> showSales() {
-    List<Widget> widgets = [];
+  void loadSales([between]) {
     dropdownIndex = dayList.indexOf(dropdownValue);
     widget.dropdownIndex[0] = dropdownIndex;
+
+    if (dropdownIndex == Day.all.index) {
+      saleStore.getSales();
+      return;
+    }
 
     end = DateTime.now().add(
       const Duration(hours: 3),
@@ -146,12 +174,10 @@ class _InsightsPageState extends State<InsightsPage> with HourMixins {
       start = end!.subtract(
         const Duration(days: 1),
       );
-      saleStore.getSales(start, end);
     } else if (dropdownIndex == Day.week.index) {
       start = end!.subtract(
         const Duration(days: 7),
       );
-      saleStore.getSales(start, end);
     } else if (dropdownIndex == Day.month.index) {
       start = DateTime(
         end!.year,
@@ -163,7 +189,6 @@ class _InsightsPageState extends State<InsightsPage> with HourMixins {
         end!.millisecond,
         end!.microsecond,
       );
-      saleStore.getSales(start, end);
     } else if (dropdownIndex == Day.year.index) {
       start = DateTime(
         end!.year - 1,
@@ -175,26 +200,7 @@ class _InsightsPageState extends State<InsightsPage> with HourMixins {
         end!.millisecond,
         end!.microsecond,
       );
-      saleStore.getSales(start, end);
-    } else if (dropdownIndex == Day.all.index) {
-      saleStore.getSales();
-    } else {
-      saleStore.state.value = [];
     }
-
-    if (saleStore.state.value.isEmpty) {
-      widgets.add(
-        const Text(
-          "Nenhuma venda nesta data",
-          textAlign: TextAlign.center,
-        ),
-      );
-    } else {
-      for (Sale sale in saleStore.state.value) {
-        widgets.add(sale.productWidget(context));
-      }
-    }
-
-    return widgets;
+    saleStore.getSales(start, end);
   }
 }

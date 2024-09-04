@@ -7,8 +7,6 @@ import 'package:market_mobile/models/sale.dart';
 
 const String url = "https://marketmobile-api.onrender.com/sale";
 
-// TODO: Implementar o GetSalesBetween (pros Insights)
-
 abstract class InterfaceSaleRepository {
   Future<List<Sale>> getAllSales([String? start, String? end]);
   Future<void> postSale(Sale sale);

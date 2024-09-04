@@ -17,7 +17,6 @@ import 'package:market_mobile/stores/sale_store.dart';
 // const Color.fromARGB(255, 243, 236, 245)
 
 // TODO: Talvez criar uma ação no Appbar para escolher como ordenar produtos e/ou vendas
-// TODO: Criar toda a página de vendas
 
 class MyApp extends StatefulWidget {
   const MyApp(this.jwt, this.payload, {super.key});
@@ -156,9 +155,9 @@ class _MyAppState extends State<MyApp> with DialogueMixins, TokenMixins {
       } else {
         await productStore.postProduct(retProduct);
       }
+      setState(() {
+        productStore.getProducts(ProductOrder.ascAZ);
+      });
     }
-    setState(() {
-      productStore.getProducts(ProductOrder.ascAZ);
-    });
   }
 }

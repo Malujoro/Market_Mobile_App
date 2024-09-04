@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:market_mobile/mixins/dialogue_mixins.dart';
 import 'package:market_mobile/mixins/validator_mixins.dart';
@@ -15,10 +16,6 @@ class SaleItemPage extends StatefulWidget {
   @override
   State<SaleItemPage> createState() => _SaleItemPageState();
 }
-
-// TODO adicionar a confirmação de voltar atrás
-// TODO adicionar o botão de finalizar venda (com um diálogo de confirmação) - PostSale
-// TODO Deixar os SaleProducts removíveis (deslizar também)
 
 class _SaleItemPageState extends State<SaleItemPage>
     with ValidationsMixin, DialogueMixins {
@@ -83,7 +80,32 @@ class _SaleItemPageState extends State<SaleItemPage>
                               shrinkWrap: true,
                               children: [
                                 for (SaleProduct saleProduct in saleProducts)
-                                  saleProduct.saleProductWidget(context)
+                                  Slidable(
+                                      endActionPane: ActionPane(
+                                        extentRatio: 0.3,
+                                        motion: const DrawerMotion(),
+                                        children: [
+                                          SlidableAction(
+                                            onPressed: (BuildContext context) {
+                                              setState(() {
+                                                saleProducts
+                                                    .remove(saleProduct);
+                                              });
+                                            },
+                                            backgroundColor: Colors.red,
+                                            foregroundColor: Colors.white,
+                                            icon: Icons.delete,
+                                            label: "Excluir",
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                              topRight: Radius.circular(16),
+                                              bottomRight: Radius.circular(16),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      child: saleProduct
+                                          .saleProductWidget(context))
                               ],
                             ),
                           ),

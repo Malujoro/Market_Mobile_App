@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:market_mobile/pages/login/login_page.dart';
 
 OutlineInputBorder boxStyle() => OutlineInputBorder(
@@ -23,6 +24,11 @@ void main() {
           disabledBorder: boxStyle(),
         ),
       ),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate
+      ],
+      supportedLocales: const [Locale('pt', 'BR')],
     ),
   );
 }
