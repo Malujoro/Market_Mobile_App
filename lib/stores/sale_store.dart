@@ -3,7 +3,7 @@ import 'package:market_mobile/http/exceptions.dart';
 import 'package:market_mobile/models/sale.dart';
 import 'package:market_mobile/repositories/sale_repository.dart';
 
-enum Order { dateAsc }
+enum SaleOrder { dateAsc }
 
 class SaleStore {
   final InterfaceSaleRepository repository;
@@ -14,14 +14,14 @@ class SaleStore {
   
   SaleStore({required this.repository});
 
-  Future getSales([Order order = Order.dateAsc]) async {
+  Future getSales([SaleOrder order = SaleOrder.dateAsc]) async {
     isLoading.value = true;
 
     try {
       final result = await repository.getAllSales();
       state.value = result;
       switch (order) {
-        case Order.dateAsc:
+        case SaleOrder.dateAsc:
           orderNameAsc();
       }
     } on NotFoundException catch (e) {
@@ -38,7 +38,7 @@ class SaleStore {
 
     try {
       await repository.postSale(sale);
-      state.value.add(sale);
+      // state.value.add(sale);
     } on NotFoundException catch (e) {
       error.value = e.message;
     } catch (e) {

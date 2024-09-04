@@ -4,6 +4,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:market_mobile/mixins/dialogue_mixins.dart';
 import 'package:market_mobile/mixins/validator_mixins.dart';
 import 'package:market_mobile/models/product.dart';
+import 'package:market_mobile/models/sale.dart';
 import 'package:market_mobile/models/sale_product.dart';
 
 class SaleItemPage extends StatefulWidget {
@@ -237,9 +238,46 @@ class _SaleItemPageState extends State<SaleItemPage>
                             ),
                           ),
                           const SizedBox(height: 16),
-                          TextButton(
-                            onPressed: touchAddProduct,
-                            child: const Text("Adicionar produto"),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextButton(
+                                onPressed: touchAddProduct,
+                                style: TextButton.styleFrom(
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 243, 236, 245),
+                                ),
+                                child: const Text("Adicionar produto"),
+                              ),
+                              const SizedBox(
+                                width: 25,
+                              ),
+                              TextButton(
+                                onPressed: saleProducts.isEmpty
+                                    ? null
+                                    : () {
+                                        if (saleProducts.isNotEmpty) {
+                                          Sale sale = Sale();
+                                          sale.saleProducts = saleProducts;
+                                          String total = sale
+                                              .calculateTotalPrice()
+                                              .toStringAsFixed(2);
+                                          goBackDialogue(
+                                            context: context,
+                                            title: "Finalizar venda?",
+                                            content:
+                                                "O total da venda é R\$$total",
+                                            returnItem: sale,
+                                          );
+                                        }
+                                      },
+                                style: TextButton.styleFrom(
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 243, 236, 245),
+                                ),
+                                child: const Text("Finalizar venda"),
+                              ),
+                            ],
                           ),
                         ],
                       ),

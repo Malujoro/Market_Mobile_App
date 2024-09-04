@@ -6,21 +6,26 @@ import 'package:market_mobile/models/sale_product.dart';
 class Sale with CustomizeMixins {
   List<SaleProduct> saleProducts = [];
   double totalPrice = 0;
-  DateTime date = DateTime.now();
+  late DateTime date;
 
   Sale();
 
   factory Sale.fromMap(Map<String, dynamic> map) {
     Sale sale = Sale();
-    sale.saleProducts = map["saleProducts"];
+    sale.saleProducts = [
+      for (Map<String, dynamic> mapAux in map["saleProducts"])
+        SaleProduct.fromMap(mapAux)
+    ];
     sale.totalPrice = map["totalPrice"];
-    sale.date = map["date"];
+    sale.date = DateTime.parse(map["date"]);
     return sale;
   }
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
-      "saleProducts": saleProducts,
+      "saleProducts": [
+        for (SaleProduct saleProduct in saleProducts) saleProduct.toMap()
+      ],
       "totalPrice": totalPrice,
     };
     return map;
@@ -53,5 +58,13 @@ class Sale with CustomizeMixins {
         ),
       ),
     );
+  }
+
+  double calculateTotalPrice() {
+    totalPrice = 0;
+    for (SaleProduct saleProduct in saleProducts) {
+      totalPrice += saleProduct.partialPrice;
+    }
+    return totalPrice;
   }
 }

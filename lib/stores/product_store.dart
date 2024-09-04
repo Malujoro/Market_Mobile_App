@@ -3,7 +3,7 @@ import 'package:market_mobile/http/exceptions.dart';
 import 'package:market_mobile/models/product.dart';
 import 'package:market_mobile/repositories/product_repository.dart';
 
-enum Order { ascAZ }
+enum ProductOrder { ascAZ }
 
 class ProductStore {
   final InterfaceProductRepository repository;
@@ -14,14 +14,14 @@ class ProductStore {
 
   ProductStore({required this.repository});
 
-  Future getProducts([Order order = Order.ascAZ]) async {
+  Future getProducts([ProductOrder order = ProductOrder.ascAZ]) async {
     isLoading.value = true;
 
     try {
       final result = await repository.getAllProducts();
       state.value = result;
       switch (order) {
-        case Order.ascAZ:
+        case ProductOrder.ascAZ:
           orderNameAsc();
       }
     } on NotFoundException catch (e) {
