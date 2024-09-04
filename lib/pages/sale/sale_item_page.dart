@@ -19,7 +19,8 @@ class SaleItemPage extends StatefulWidget {
 // TODO adicionar o botão de finalizar venda (com um diálogo de confirmação) - PostSale
 // TODO Deixar os SaleProducts removíveis (deslizar também)
 
-class _SaleItemPageState extends State<SaleItemPage> with ValidationsMixin, DialogueMixins {
+class _SaleItemPageState extends State<SaleItemPage>
+    with ValidationsMixin, DialogueMixins {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   late FocusNode quantityFocusNode;
 
@@ -49,22 +50,11 @@ class _SaleItemPageState extends State<SaleItemPage> with ValidationsMixin, Dial
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, result) async {
-          if (didPop) {
-            return;
-          }
-          if (userEdited) {
-            goBackDialogue(
-              context: context,
-              title: "Descartar venda?",
-              content: "Se sair as informações da venda serão perdidas!",
-            );
-          } else {
-            Navigator.pop(context);
-          }
-        },
+      child: goBackDialogueAlter(
+        context: context,
+        title: "Descartar venda?",
+        content: "Se sair as informações da venda serão perdidas!",
+        condition: userEdited,
         child: Scaffold(
           appBar: AppBar(
             title: const Text("Venda"),
@@ -74,8 +64,8 @@ class _SaleItemPageState extends State<SaleItemPage> with ValidationsMixin, Dial
             child: Form(
               key: formKey,
               child: Padding(
-                padding:
-                    const EdgeInsets.only(bottom: 25, left: 8, right: 8, top: 8),
+                padding: const EdgeInsets.only(
+                    bottom: 25, left: 8, right: 8, top: 8),
                 child: SingleChildScrollView(
                   reverse: true,
                   child: Column(
@@ -116,7 +106,7 @@ class _SaleItemPageState extends State<SaleItemPage> with ValidationsMixin, Dial
                                   () {
                                     List<Product> result =
                                         selectProduct(barCodeController.text);
-        
+
                                     if (result.isEmpty) {
                                       return "Insira um código de barras que seja válido";
                                     }
@@ -128,7 +118,9 @@ class _SaleItemPageState extends State<SaleItemPage> with ValidationsMixin, Dial
                                       name: true,
                                       selectedProduct: true,
                                       partialPrice: true);
-                                  userEdited = true;
+                                  setState(() {
+                                    userEdited = true;
+                                  });
                                 },
                                 onFieldSubmitted: (value) {
                                   updateName(value);
@@ -164,7 +156,8 @@ class _SaleItemPageState extends State<SaleItemPage> with ValidationsMixin, Dial
                               }
                               return selectAllProducts(value);
                             },
-                            itemBuilder: (BuildContext context, Product product) {
+                            itemBuilder:
+                                (BuildContext context, Product product) {
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
@@ -200,7 +193,8 @@ class _SaleItemPageState extends State<SaleItemPage> with ValidationsMixin, Dial
                             enabled: false,
                             readOnly: true,
                             controller: nameController,
-                            decoration: const InputDecoration(labelText: "Nome"),
+                            decoration:
+                                const InputDecoration(labelText: "Nome"),
                           ),
                           const SizedBox(height: 16),
                           TextFormField(
@@ -212,11 +206,14 @@ class _SaleItemPageState extends State<SaleItemPage> with ValidationsMixin, Dial
                               () => isPositive(value),
                             ]),
                             onChanged: (value) {
-                              userEdited = true;
+                              setState(() {
+                                userEdited = true;
+                              });
                               if (value.isEmpty) {
                                 reset(partialPrice: true);
                               } else if (selectedProduct != null) {
-                                updatePartialPrice(selectedProduct!.price, value);
+                                updatePartialPrice(
+                                    selectedProduct!.price, value);
                               }
                             },
                             onFieldSubmitted: (value) {

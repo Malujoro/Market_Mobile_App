@@ -3,8 +3,6 @@ import 'package:market_mobile/models/product.dart';
 import 'package:market_mobile/pages/sale/sale_item_page.dart';
 import 'package:market_mobile/stores/product_store.dart';
 
-// TODO: Adicionar todas as funcionalidades da Home
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.productStore});
 

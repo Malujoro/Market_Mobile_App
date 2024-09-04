@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 // TODO: Adicionar as funcionalidades do insight
 
-enum Days { day, week, month, year, all }
+enum Day { day, week, month, year, all }
 
-List<String> list = [
+List<String> dayList = [
   "Últimas 24h",
   "Última semana",
   "Último mês",
@@ -20,7 +20,7 @@ class InsightsPage extends StatefulWidget {
 }
 
 class _InsightsPageState extends State<InsightsPage> {
-  String dropdownValue = list.first;
+  String dropdownValue = dayList.first;
 
   @override
   Widget build(BuildContext context) {
@@ -42,13 +42,16 @@ class _InsightsPageState extends State<InsightsPage> {
                   ),
                   icon: const Icon(Icons.keyboard_arrow_down),
                   onChanged: (value) {
-                    setState(() {
-                      dropdownValue = value!;
-                    });
+                    if (value != null) {
+                      setState(() {
+                        dropdownValue = value;
+                      });
+                    }
                   },
                   items: [
-                    for (String text in list)
-                      DropdownMenuItem(value: text, child: Text(text))
+                    for (int i = 0; i < Day.values.length; i++)
+                      DropdownMenuItem(
+                          value: dayList[i], child: Text(dayList[i]))
                   ]),
               const SizedBox(width: 60),
               GestureDetector(
@@ -74,13 +77,37 @@ class _InsightsPageState extends State<InsightsPage> {
             child: ListView(
               padding: const EdgeInsets.all(16),
               shrinkWrap: true,
-              children: [
-                for (int i = 0; i < 100; i++) Text("${i + 1} [Olá Mundo]")
-              ],
+              children: showSales(),
             ),
           ),
         ),
       ],
     );
+  }
+
+  List<Widget> showSales() {
+    List<Widget> widgets = [];
+    int index = dayList.indexOf(dropdownValue);
+    late String text;
+
+    if (index == Day.day.index) {
+      text = "24 Horas";
+    } else if (index == Day.week.index) {
+      text = "7 Dias";
+    } else if (index == Day.month.index) {
+      text = "1 Mês";
+    } else if (index == Day.year.index) {
+      text = "1 Ano";
+    } else if (index == Day.all.index) {
+      text = "Todo o tempo";
+    } else {
+      text = "Valor inválido";
+    }
+
+    for (int i = 0; i < 100; i++) {
+      widgets.add(Text("${i + 1} [$text]"));
+    }
+
+    return widgets;
   }
 }

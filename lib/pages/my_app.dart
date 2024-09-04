@@ -61,20 +61,12 @@ class _MyAppState extends State<MyApp> with DialogueMixins, TokenMixins {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, result) async {
-          if (didPop) {
-            return;
-          }
-          goBackDialogue(
-            context: context,
-            title: "Efetuar logout?",
-            content: "Você irá voltar para a tela de login",
-            confirmFunc: () {
-              tokenSet("");
-            },
-          );
+      child: goBackDialogueAlter(
+        context: context,
+        title: "Efetuar logout?",
+        content: "Você irá voltar para a tela de login",
+        confirmFunc: () {
+          tokenSet("");
         },
         child: Scaffold(
           appBar: AppBar(

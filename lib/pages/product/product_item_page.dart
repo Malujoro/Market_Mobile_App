@@ -42,22 +42,11 @@ class _ProductItemPageState extends State<ProductItemPage>
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, result) async {
-          if (didPop) {
-            return;
-          }
-          if (userEdited) {
-            goBackDialogue(
-              context: context,
-              title: "Descartar Alterações?",
-              content: "Se sair as alterações serão perdidas!",
-            );
-          } else {
-            Navigator.pop(context);
-          }
-        },
+      child: goBackDialogueAlter(
+        context: context,
+        title: "Descartar Alterações?",
+        content: "Se sair as alterações serão perdidas!",
+        condition: userEdited,
         child: Scaffold(
           appBar: AppBar(
             title: Text(
@@ -84,7 +73,9 @@ class _ProductItemPageState extends State<ProductItemPage>
                             "O código de barras deve ter 12 dígitos"),
                       ]),
                       onChanged: (value) {
-                        userEdited = true;
+                        setState(() {
+                          userEdited = true;
+                        });
                         editedProduct.barCode = value;
                       },
                       textInputAction: TextInputAction.next,
@@ -105,7 +96,9 @@ class _ProductItemPageState extends State<ProductItemPage>
                         () => minLength(value, 2),
                       ]),
                       onChanged: (value) {
-                        userEdited = true;
+                        setState(() {
+                          userEdited = true;
+                        });
                         setState(() {
                           editedProduct.name = value;
                         });
@@ -130,7 +123,9 @@ class _ProductItemPageState extends State<ProductItemPage>
                         () => isPositive(value),
                       ]),
                       onChanged: (value) {
-                        userEdited = true;
+                        setState(() {
+                          userEdited = true;
+                        });
                         if (value.isEmpty) {
                           editedProduct.price = 0;
                         } else {
@@ -159,7 +154,9 @@ class _ProductItemPageState extends State<ProductItemPage>
                         "O código de barras deve ter 12 dígitos",
                       ),
                       onChanged: (value) {
-                        userEdited = true;
+                        setState(() {
+                          userEdited = true;
+                        });
                         editedProduct.description = value;
                       },
                       onFieldSubmitted: (value) {

@@ -34,7 +34,7 @@ mixin DialogueMixins {
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
-                if(confirmFunc != null) {
+                if (confirmFunc != null) {
                   confirmFunc();
                 }
               },
@@ -46,6 +46,34 @@ mixin DialogueMixins {
           ],
         );
       },
+    );
+  }
+
+  PopScope goBackDialogueAlter(
+      {required BuildContext context,
+      required String title,
+      required String content,
+      required Widget child,
+      bool condition = true,
+      Function? confirmFunc}) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) {
+          return;
+        }
+        if (condition) {
+          goBackDialogue(
+            context: context,
+            title: title,
+            content: content,
+            confirmFunc: confirmFunc,
+          );
+        } else {
+          Navigator.pop(context);
+        }
+      },
+      child: child,
     );
   }
 }
