@@ -24,7 +24,7 @@ class _ProductPageState extends State<ProductPage> {
   void initState() {
     super.initState();
     store = widget.store;
-    if(store.state.value.isEmpty) {
+    if (store.state.value.isEmpty) {
       store.getProducts();
     }
   }
@@ -113,7 +113,7 @@ class _ProductPageState extends State<ProductPage> {
                                         ),
                                       )
                                     ]),
-                                child: product.productWidget(richTextCreator),
+                                child: product.productWidget(context),
                               ),
                             ),
                           ),
@@ -124,19 +124,6 @@ class _ProductPageState extends State<ProductPage> {
             ],
           );
         },
-      ),
-    );
-  }
-
-  Widget richTextCreator(String label, String text) {
-    return RichText(
-      text: TextSpan(
-        style: DefaultTextStyle.of(context).style,
-        children: [
-          TextSpan(
-              text: label, style: const TextStyle(fontWeight: FontWeight.bold)),
-          TextSpan(text: text),
-        ],
       ),
     );
   }

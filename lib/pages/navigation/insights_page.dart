@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 
 // TODO: Adicionar as funcionalidades do insight
 
+enum Days { day, week, month, year, all }
+
 List<String> list = [
   "Últimas 24h",
   "Última semana",
   "Último mês",
   "Último ano",
+  "Todas as vendas",
 ];
 
 class InsightsPage extends StatefulWidget {
@@ -24,7 +27,8 @@ class _InsightsPageState extends State<InsightsPage> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
+          padding:
+              const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -61,7 +65,8 @@ class _InsightsPageState extends State<InsightsPage> {
         ),
         Flexible(
           child: Container(
-            margin: const EdgeInsets.only(left: 35, right: 35, bottom: 35, top: 15),
+            margin:
+                const EdgeInsets.only(left: 35, right: 35, bottom: 35, top: 15),
             decoration: BoxDecoration(
               color: const Color.fromARGB(255, 243, 236, 245),
               borderRadius: BorderRadius.circular(25),

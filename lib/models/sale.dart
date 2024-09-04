@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:market_mobile/mixins/customize_mixins.dart';
 import 'package:market_mobile/models/sale_product.dart';
 
-class Sale {
+class Sale with CustomizeMixins {
   List<SaleProduct> saleProducts = [];
   double totalPrice = 0;
   DateTime date = DateTime.now();
@@ -25,7 +26,7 @@ class Sale {
     return map;
   }
 
-  Widget productWidget(Function richTextCreator) {
+  Widget productWidget(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 0.7),
       shape: const RoundedRectangleBorder(
@@ -41,9 +42,13 @@ class Sale {
           children: [
             // richTextCreator("ID: ", id),
             richTextCreator(
-                "Preço total: ", "R\$${totalPrice.toStringAsFixed(2)}"),
+                context: context,
+                label: "Preço total: ",
+                text: "R\$${totalPrice.toStringAsFixed(2)}"),
             richTextCreator(
-                "Data: ", DateFormat('yyyy-MM-dd - kk:mm').format(date)),
+                context: context,
+                label: "Data: ",
+                text: DateFormat('yyyy-MM-dd - kk:mm').format(date)),
           ],
         ),
       ),

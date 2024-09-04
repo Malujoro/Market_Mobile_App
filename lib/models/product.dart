@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:market_mobile/mixins/customize_mixins.dart';
 
-class Product {
+class Product with CustomizeMixins{
   late String barCode;
   late String name;
   String description;
@@ -32,7 +33,7 @@ class Product {
     return map;
   }
 
-  Widget productWidget(Function richTextCreator) {
+  Widget productWidget(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 0.7),
       shape: const RoundedRectangleBorder(
@@ -46,10 +47,10 @@ class Product {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            richTextCreator("Código: ", barCode),
-            richTextCreator("Nome: ", name),
-            richTextCreator("Preço: ", "R\$${price.toStringAsFixed(2)}"),
-            richTextCreator("Descrição: ", description),
+            richTextCreator(context: context, label: "Código: ", text: barCode),
+            richTextCreator(context: context, label: "Nome: ", text: name),
+            richTextCreator(context: context, label: "Preço: ", text: "R\$${price.toStringAsFixed(2)}"),
+            richTextCreator(context: context, label: "Descrição: ", text: description),
           ],
         ),
       ),

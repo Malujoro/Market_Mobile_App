@@ -16,7 +16,8 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> with ValidationsMixin, TokenMixins {
+class _LoginPageState extends State<LoginPage>
+    with ValidationsMixin, TokenMixins {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
@@ -66,11 +67,13 @@ class _LoginPageState extends State<LoginPage> with ValidationsMixin, TokenMixin
                         validator: (value) => combine([
                           () => isNotEmpty(value),
                           () => minLength(value, 2),
+                          // TODO: Reativar a validação do email
                           // () => emailValid(value),
                         ]),
                         onChanged: (value) {
                           userEdited = true;
                         },
+                        textInputAction: TextInputAction.next,
                         inputFormatters: [
                           LengthLimitingTextInputFormatter(100),
                         ],
@@ -92,6 +95,7 @@ class _LoginPageState extends State<LoginPage> with ValidationsMixin, TokenMixin
                           onChanged: (value) {
                             userEdited = true;
                           },
+                          textInputAction: TextInputAction.next,
                           inputFormatters: [
                             LengthLimitingTextInputFormatter(100),
                           ],
@@ -107,10 +111,20 @@ class _LoginPageState extends State<LoginPage> with ValidationsMixin, TokenMixin
                         controller: passwordController,
                         validator: (value) => combine([
                           () => isNotEmpty(value),
+                          // TODO: Reativar a validação do senha
                           // () => minLength(value, 8),
                         ]),
                         onChanged: (value) {
                           userEdited = true;
+                        },
+                        // textInputAction: TextInputAction.,
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (value) {
+                          if (register) {
+                            touchRegister(context);
+                          } else {
+                            touchLogin(context);
+                          }
                         },
                         inputFormatters: [
                           LengthLimitingTextInputFormatter(100),
@@ -143,24 +157,7 @@ class _LoginPageState extends State<LoginPage> with ValidationsMixin, TokenMixin
                                 return;
                               }
 
-                              if (formKey.currentState!.validate()) {
-                                var jwt = await attemptLogin(
-                                    emailController.text,
-                                    passwordController.text);
-
-                                if (jwt != null) {
-                                  tokenSet(jwt);
-                                  // storage.write(key: 'jwt', value: jwt);
-                                  goToMyApp(jwt);
-                                } else {
-                                  displayDialog(
-                                    context,
-                                    const Text("Tentativa de Login"),
-                                    const Text(
-                                        "Erro! Usuário ou senha inválidos"),
-                                  );
-                                }
-                              }
+                              touchLogin(context);
                             },
                             style: ElevatedButton.styleFrom(
                                 fixedSize: const Size(150, 50)),
@@ -179,32 +176,7 @@ class _LoginPageState extends State<LoginPage> with ValidationsMixin, TokenMixin
                                 return;
                               }
 
-                              if (formKey.currentState!.validate()) {
-                                int code = await attemptRegister(
-                                    emailController.text,
-                                    usernameController.text,
-                                    passwordController.text);
-                                if (code == 200) {
-                                  displayDialog(
-                                      context,
-                                      const Text("Sucesso"),
-                                      const Text(
-                                          "Usuário registrado! Efetue o login"));
-                                } else if (code == 400) {
-                                  displayDialog(
-                                      context,
-                                      const Text(
-                                          "Email já cadastrado"),
-                                      const Text(
-                                          "Utilize outro email ou efetue login se já possuir uma conta"));
-                                } else {
-                                  displayDialog(
-                                      context,
-                                      const Text("Erro"),
-                                      const Text(
-                                          "Ocorreu um erro desconhecido"));
-                                }
-                              }
+                              touchRegister(context);
                             },
                             style: ElevatedButton.styleFrom(
                                 fixedSize: const Size(150, 50)),
@@ -233,7 +205,6 @@ class _LoginPageState extends State<LoginPage> with ValidationsMixin, TokenMixin
 
   Future<void> loginAuto() async {
     var jwt = await tokenGet();
-    // var jwt = await storage.read(key: 'jwt');
 
     if (jwt != null && jwt.isNotEmpty) {
       bool expired = JwtDecoder.isExpired(jwt);
@@ -243,11 +214,56 @@ class _LoginPageState extends State<LoginPage> with ValidationsMixin, TokenMixin
     }
   }
 
+  void touchLogin(BuildContext context) async {
+    if (formKey.currentState!.validate()) {
+      var jwt =
+          await attemptLogin(emailController.text, passwordController.text);
+
+      if (jwt != null) {
+        usernameController.clear();
+        passwordController.clear();
+
+        tokenSet(jwt);
+        goToMyApp(jwt);
+      } else {
+        if (context.mounted) {
+          displayDialog(
+            context,
+            const Text("Tentativa de Login"),
+            const Text("Erro! Usuário ou senha inválidos"),
+          );
+        }
+      }
+    }
+  }
+
+  void touchRegister(BuildContext context) async {
+    if (formKey.currentState!.validate()) {
+      int code = await attemptRegister(emailController.text,
+          usernameController.text, passwordController.text);
+      if (context.mounted) {
+        if (code == 200) {
+          register = false;
+          displayDialog(context, const Text("Sucesso"),
+              const Text("Usuário registrado! Efetue o login"));
+        } else if (code == 400) {
+          displayDialog(
+              context,
+              const Text("Email já cadastrado"),
+              const Text(
+                  "Utilize outro email ou efetue login se já possuir uma conta"));
+        } else {
+          displayDialog(context, const Text("Erro"),
+              const Text("Ocorreu um erro desconhecido"));
+        }
+      }
+    }
+  }
+
   Future<String?> attemptLogin(
     String email,
     String password,
   ) async {
-
     isLoading.value = true;
     Map<String, String> headers = {'Content-Type': 'application/json'};
     var request = http.Request(

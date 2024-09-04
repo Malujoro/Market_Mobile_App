@@ -87,6 +87,7 @@ class _ProductItemPageState extends State<ProductItemPage>
                         userEdited = true;
                         editedProduct.barCode = value;
                       },
+                      textInputAction: TextInputAction.next,
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly,
                         LengthLimitingTextInputFormatter(12),
@@ -109,9 +110,11 @@ class _ProductItemPageState extends State<ProductItemPage>
                           editedProduct.name = value;
                         });
                       },
+                      textInputAction: TextInputAction.next,
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(100),
-                        FilteringTextInputFormatter.allow(RegExp("[a-z A-Z 0-9]"))
+                        FilteringTextInputFormatter.allow(
+                            RegExp("[a-z A-Z 0-9]"))
                       ],
                       decoration: const InputDecoration(
                         labelText: "Nome do Produto",
@@ -134,6 +137,7 @@ class _ProductItemPageState extends State<ProductItemPage>
                           editedProduct.price = double.parse(value);
                         }
                       },
+                      textInputAction: TextInputAction.next,
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
                             RegExp(r'^\d+(\.\d*)?')),
@@ -158,9 +162,14 @@ class _ProductItemPageState extends State<ProductItemPage>
                         userEdited = true;
                         editedProduct.description = value;
                       },
+                      onFieldSubmitted: (value) {
+                        touchSave(context);
+                      },
+                      textInputAction: TextInputAction.done,
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(100),
-                        FilteringTextInputFormatter.allow(RegExp("[a-z A-Z 0-9]"))
+                        FilteringTextInputFormatter.allow(
+                            RegExp("[a-z A-Z 0-9]"))
                       ],
                       decoration: const InputDecoration(
                         labelText: "Descrição",
@@ -169,9 +178,7 @@ class _ProductItemPageState extends State<ProductItemPage>
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
-                        if (formKey.currentState!.validate()) {
-                          Navigator.pop(context, editedProduct);
-                        }
+                        touchSave(context);
                       },
                       child: const Text(
                         "Salvar produto",
@@ -187,5 +194,11 @@ class _ProductItemPageState extends State<ProductItemPage>
         ),
       ),
     );
+  }
+
+  void touchSave(BuildContext context) {
+    if (formKey.currentState!.validate()) {
+      Navigator.pop(context, editedProduct);
+    }
   }
 }
