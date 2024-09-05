@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 
 mixin DialogueMixins {
+  void displayDialog(BuildContext context, Widget title, Widget text) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: title,
+        content: text,
+      ),
+    );
+  }
+
   void goBackDialogue(
       {required BuildContext context,
       required String title,

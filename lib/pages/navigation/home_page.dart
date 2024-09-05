@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:market_mobile/mixins/dialogue_mixins.dart';
 import 'package:market_mobile/models/product.dart';
 import 'package:market_mobile/models/sale.dart';
 import 'package:market_mobile/pages/sale/sale_item_page.dart';
@@ -16,7 +18,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with DialogueMixins {
   late final ProductStore productStore;
   late final SaleStore saleStore;
 
@@ -40,7 +42,6 @@ class _HomePageState extends State<HomePage> {
           productStore.isLoading,
           productStore.error,
           productStore.state,
-
           saleStore.isLoading,
           saleStore.error,
         ]),
@@ -50,11 +51,25 @@ class _HomePageState extends State<HomePage> {
           }
 
           if (productStore.error.value.isNotEmpty) {
-            return Text(productStore.error.value);
+            SchedulerBinding.instance.addPostFrameCallback((_) {
+              displayDialog(
+                context,
+                const Text("Erro!"),
+                Text(productStore.error.value),
+              );
+              productStore.error.value = "";
+            });
           }
 
           if (saleStore.error.value.isNotEmpty) {
-            return Text(saleStore.error.value);
+            SchedulerBinding.instance.addPostFrameCallback((_) {
+              displayDialog(
+                context,
+                const Text("Erro!"),
+                Text(saleStore.error.value),
+              );
+              saleStore.error.value = "";
+            });
           }
 
           return Card(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:market_mobile/mixins/dialogue_mixins.dart';
 import 'package:market_mobile/mixins/token_mixins.dart';
 import 'package:market_mobile/mixins/validator_mixins.dart';
 import 'package:http/http.dart' as http;
@@ -17,7 +18,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage>
-    with ValidationsMixin, TokenMixins {
+    with ValidationsMixin, TokenMixins, DialogueMixins {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
@@ -310,15 +311,5 @@ class _LoginPageState extends State<LoginPage>
     isLoading.value = false;
 
     return response.statusCode;
-  }
-
-  void displayDialog(BuildContext context, Widget title, Widget text) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: title,
-        content: text,
-      ),
-    );
   }
 }

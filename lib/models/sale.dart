@@ -63,7 +63,7 @@ class Sale with CustomizeMixins, HourMixins {
   double calculateTotalPrice() {
     totalPrice = 0;
     for (SaleProduct saleProduct in saleProducts) {
-      totalPrice += saleProduct.partialPrice;
+      totalPrice += saleProduct.partialPrice * saleProduct.quantity;
     }
     return totalPrice;
   }

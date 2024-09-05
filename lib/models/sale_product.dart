@@ -32,9 +32,7 @@ class SaleProduct with CustomizeMixins {
     return map;
   }
 
-  Widget saleProductWidget(BuildContext context) {
-    TextStyle style =
-        const TextStyle(color: Colors.black, fontSize: 14, height: 1.4);
+  Widget saleProductWidget(BuildContext context, Function removeProduct) {
     return Card(
       margin: const EdgeInsets.only(bottom: 0.7),
       shape: const RoundedRectangleBorder(
@@ -48,37 +46,33 @@ class SaleProduct with CustomizeMixins {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                richTextCreator(
-                    context: context,
-                    label: "Código: ",
-                    text: productBarCode,
-                    style: style),
-                richTextCreator(
-                    context: context,
-                    label: "Nome: ",
-                    text: productName,
-                    style: style),
-              ],
+            Expanded(
+              flex: 1,
+              child: Text(
+                productName,
+                textAlign: TextAlign.start,
+              ),
             ),
-            const SizedBox(width: 25),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                richTextCreator(
-                    context: context,
-                    label: "Quantidade: ",
-                    text: quantity.toString(),
-                    style: style),
-                richTextCreator(
-                    context: context,
-                    label: "Preço parcial: ",
-                    text: "R\$${partialPrice.toStringAsFixed(2)}",
-                    style: style),
-              ],
+            Expanded(
+              child: Text(
+                quantity.toString(),
+                textAlign: TextAlign.center,
+              ),
             ),
+            Expanded(
+              child: Text(
+                "R\$${partialPrice.toStringAsFixed(2)}",
+                textAlign: TextAlign.end,
+              ),
+            ),
+            const SizedBox(
+              width: 8
+            ),
+            IconButton(
+                onPressed: () {
+                  removeProduct();
+                },
+                icon: const Icon(Icons.highlight_remove, size: 25,))
           ],
         ),
       ),

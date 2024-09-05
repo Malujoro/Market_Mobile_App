@@ -35,7 +35,7 @@ class _SaleItemPageState extends State<SaleItemPage>
   @override
   void initState() {
     super.initState();
-    reset(partialPrice: true);
+    reset(all: true);
     quantityFocusNode = FocusNode();
   }
 
@@ -71,41 +71,78 @@ class _SaleItemPageState extends State<SaleItemPage>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Flexible(
-                        child: Container(
+                        child: SizedBox(
                           height: 350,
-                          margin: const EdgeInsets.all(16),
+                          // margin: const EdgeInsets.all(8),
                           child: Card(
                             color: const Color.fromARGB(255, 243, 236, 245),
                             child: ListView(
                               shrinkWrap: true,
                               children: [
-                                for (SaleProduct saleProduct in saleProducts)
-                                  Slidable(
-                                      endActionPane: ActionPane(
-                                        extentRatio: 0.3,
-                                        motion: const DrawerMotion(),
-                                        children: [
-                                          SlidableAction(
-                                            onPressed: (BuildContext context) {
-                                              setState(() {
-                                                saleProducts
-                                                    .remove(saleProduct);
-                                              });
-                                            },
-                                            backgroundColor: Colors.red,
-                                            foregroundColor: Colors.white,
-                                            icon: Icons.delete,
-                                            label: "Excluir",
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              topRight: Radius.circular(16),
-                                              bottomRight: Radius.circular(16),
-                                            ),
-                                          ),
-                                        ],
+                                const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          "Nome",
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                       ),
-                                      child: saleProduct
-                                          .saleProductWidget(context))
+                                      Expanded(
+                                        child: Text(
+                                          "Quant.",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          "Preço",
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      SizedBox(width: 63),
+                                    ],
+                                  ),
+                                ),
+                                for (SaleProduct saleProduct in saleProducts)
+                                  Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Slidable(
+                                        endActionPane: ActionPane(
+                                          extentRatio: 0.3,
+                                          motion: const DrawerMotion(),
+                                          children: [
+                                            SlidableAction(
+                                              onPressed:
+                                                  (BuildContext context) {
+                                                removeProduct(saleProduct);
+                                              },
+                                              backgroundColor: Colors.red,
+                                              foregroundColor: Colors.white,
+                                              icon: Icons.delete,
+                                              label: "Excluir",
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                topRight: Radius.circular(16),
+                                                bottomRight:
+                                                    Radius.circular(16),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        child: saleProduct
+                                            .saleProductWidget(context, () {
+                                          removeProduct(saleProduct);
+                                        })),
+                                  )
                               ],
                             ),
                           ),
@@ -148,6 +185,7 @@ class _SaleItemPageState extends State<SaleItemPage>
                                 onFieldSubmitted: (value) {
                                   updateName(value);
                                   quantityFocusNode.requestFocus();
+                                  reset(quantity: true);
                                 },
                                 textInputAction: TextInputAction.next,
                                 inputFormatters: [
@@ -196,6 +234,7 @@ class _SaleItemPageState extends State<SaleItemPage>
                               updatePartialPrice(
                                   product.price, quantityController.text);
                               quantityFocusNode.requestFocus();
+                              reset(quantity: true);
                             },
                             emptyBuilder: (context) {
                               return const Padding(
@@ -362,8 +401,9 @@ class _SaleItemPageState extends State<SaleItemPage>
     if (quantity.isEmpty) {
       reset(partialPrice: true);
     } else {
-      double result = price * double.parse(quantity);
-      partialPriceController.text = result.toStringAsFixed(2);
+      // double result = price * double.parse(quantity);
+      // partialPriceController.text = result.toStringAsFixed(2);
+      partialPriceController.text = price.toString();
     }
   }
 
@@ -381,7 +421,7 @@ class _SaleItemPageState extends State<SaleItemPage>
       nameController.clear();
     }
     if (quantity || all) {
-      quantityController.clear();
+      quantityController.text = "1";
     }
     if (partialPrice || all) {
       partialPriceController.text = "0";
@@ -389,5 +429,11 @@ class _SaleItemPageState extends State<SaleItemPage>
     if (selectedProduct || all) {
       this.selectedProduct = null;
     }
+  }
+
+  void removeProduct(SaleProduct saleProduct) {
+    setState(() {
+      saleProducts.remove(saleProduct);
+    });
   }
 }

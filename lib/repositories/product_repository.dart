@@ -24,7 +24,10 @@ class ProductRepository with QueryMixins implements InterfaceProductRepository {
   Future<List<Product>> getAllProducts() async {
     final response = await client.get(url: url, token: jwt);
 
-    if (verifyQuery(response.statusCode)) {
+    if (verifyQuery(
+      response.statusCode,
+      text: "Não foi possível carregar os produtos",
+    )) {
       final List<Product> products = [];
 
       final body = jsonDecode(response.body);
@@ -43,6 +46,10 @@ class ProductRepository with QueryMixins implements InterfaceProductRepository {
   @override
   Future<void> queryProduct(Product product, Query type) async {
     String query;
+    List<String> errorText = [
+      "Não foi possível salvar a alteração do produto",
+      "Não foi possível salvar o produto"
+    ];
     switch (type) {
       case Query.put:
         query = 'PUT';
@@ -57,7 +64,7 @@ class ProductRepository with QueryMixins implements InterfaceProductRepository {
       type: query,
     );
 
-    verifyQuery(response);
+    verifyQuery(response, text: errorText[(type).index]);
   }
 
   @override
@@ -68,6 +75,9 @@ class ProductRepository with QueryMixins implements InterfaceProductRepository {
       id: barCode,
     );
 
-    verifyQuery(response);
+    verifyQuery(
+      response,
+      text: "Não é possível remover o produto! Ele está associado a uma venda",
+    );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:market_mobile/mixins/dialogue_mixins.dart';
 import 'package:market_mobile/models/product.dart';
 import 'package:market_mobile/stores/product_store.dart';
 
@@ -15,7 +17,7 @@ class ProductPage extends StatefulWidget {
   State<ProductPage> createState() => _ProductPageState();
 }
 
-class _ProductPageState extends State<ProductPage> {
+class _ProductPageState extends State<ProductPage> with DialogueMixins {
   late final ProductStore store;
 
   TextEditingController searchController = TextEditingController();
@@ -41,15 +43,22 @@ class _ProductPageState extends State<ProductPage> {
         if (store.isLoading.value) {
           return const CircularProgressIndicator();
         }
-    
+
         if (store.error.value.isNotEmpty) {
-          return Text(store.error.value);
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            displayDialog(
+              context,
+              const Text("Erro!"),
+              Text(store.error.value),
+            );
+            store.error.value = "";
+          });
         }
-    
+
         if (store.state.value.isEmpty) {
           return const Text("Nenhum produto cadastrado");
         }
-    
+
         return Column(
           children: [
             Padding(
@@ -153,8 +162,10 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
-  void deleteProduct(Product product) {
-    store.deleteProduct(product.barCode);
-    store.state.value.remove(product);
+  void deleteProduct(Product product) async {
+    await store.deleteProduct(product.barCode);
+    if (store.error.value.isEmpty) {
+      store.state.value.remove(product);
+    }
   }
 }

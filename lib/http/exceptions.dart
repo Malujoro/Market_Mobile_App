@@ -10,3 +10,9 @@ class ExpiredToken implements Exception {
 
   ExpiredToken(this.message);
 }
+
+class BadRequest implements Exception {
+  final String message;
+
+  BadRequest(this.message);
+}

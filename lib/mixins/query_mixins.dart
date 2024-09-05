@@ -9,7 +9,7 @@ mixin QueryMixins {
     } else if (responseCode == 401) {
       throw ExpiredToken("Sessão expirada");
     } else {
-      throw Exception(text ?? "Não foi possível carregar os produtos");
+      throw Exception(text ?? "Erro $responseCode");
     }
   }
 }

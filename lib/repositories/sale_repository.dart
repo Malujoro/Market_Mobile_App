@@ -29,7 +29,10 @@ class SaleRepository with QueryMixins implements InterfaceSaleRepository {
       response = await client.get(url: url, token: jwt);
     }
 
-    if (verifyQuery(response.statusCode, text: "Não foi possível carregar as vendas")) {
+    if (verifyQuery(
+      response.statusCode,
+      text: "Não foi possível carregar as vendas",
+    )) {
       final List<Sale> sales = [];
 
       final body = jsonDecode(response.body);
@@ -54,7 +57,7 @@ class SaleRepository with QueryMixins implements InterfaceSaleRepository {
       type: 'POST',
     );
 
-    verifyQuery(response, text: "Não foi possível carregar as vendas");
+    verifyQuery(response, text: "Não foi possível salvar a venda");
   }
 
   @override
@@ -65,6 +68,6 @@ class SaleRepository with QueryMixins implements InterfaceSaleRepository {
       id: id.toString(),
     );
 
-    verifyQuery(response, text: "Não foi possível carregar as vendas");
+    verifyQuery(response, text: "Não foi possível excluir a venda");
   }
 }

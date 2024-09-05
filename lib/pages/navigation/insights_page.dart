@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:market_mobile/mixins/dialogue_mixins.dart';
 import 'package:market_mobile/mixins/hour_mixins.dart';
 import 'package:market_mobile/models/sale.dart';
 import 'package:market_mobile/stores/sale_store.dart';
@@ -24,7 +26,8 @@ class InsightsPage extends StatefulWidget {
   State<InsightsPage> createState() => _InsightsPageState();
 }
 
-class _InsightsPageState extends State<InsightsPage> with HourMixins {
+class _InsightsPageState extends State<InsightsPage>
+    with HourMixins, DialogueMixins {
   late final SaleStore saleStore;
   late String dropdownValue;
   late int dropdownIndex;
@@ -57,7 +60,14 @@ class _InsightsPageState extends State<InsightsPage> with HourMixins {
         }
 
         if (saleStore.error.value.isNotEmpty) {
-          return Text(saleStore.error.value);
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            displayDialog(
+              context,
+              const Text("Erro!"),
+              Text(saleStore.error.value),
+            );
+            saleStore.error.value = "";
+          });
         }
 
         return Column(
