@@ -20,65 +20,54 @@ class _PlansPageState extends State<PlansPage>
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      // TODO ativar caso queira o pop up de saída da tela de plano
-      // child: goBackDialogueAlter(
-      //   context: context,
-      //   title: "Já está indo?",
-      //   content: "Deseja voltar para a tela de início?",
-        // 
-        // confirmFunc: () {
-        //   Navigator.popUntil(
-        //       context, ModalRoute.withName(Navigator.defaultRouteName));
-        // },
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text("Planos"),
-            centerTitle: true,
-          ),
-          body: Center(
-            child: Container(
-              margin: const EdgeInsets.all(40),
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        "Plano padrão",
-                        style: TextStyle(fontSize: 25),
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        "Por apenas R\$X.XX por mês, você ganhará acesso às seguintes funcionalidades: ",
-                        textAlign: TextAlign.justify,
-                      ),
-                      const SizedBox(height: 16),
-                      const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('\u2022 Gestão de vendas'),
-                          Text('\u2022 Gestão de produtos'),
-                          Text('\u2022 Controle de estoque'),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      TextButton(
-                        onPressed: () {
-                          createSession(context);
-                        },
-                        style:
-                            TextButton.styleFrom(backgroundColor: Colors.white),
-                        child: const Text("Assine agora"),
-                      )
-                    ],
-                  ),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Planos"),
+          centerTitle: true,
+        ),
+        body: Center(
+          child: Container(
+            margin: const EdgeInsets.all(40),
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      "Plano padrão",
+                      style: TextStyle(fontSize: 25),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      "Por apenas R\$X.XX por mês, você ganhará acesso às seguintes funcionalidades: ",
+                      textAlign: TextAlign.justify,
+                    ),
+                    const SizedBox(height: 16),
+                    const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('\u2022 Gestão de vendas'),
+                        Text('\u2022 Gestão de produtos'),
+                        Text('\u2022 Controle de estoque'),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    TextButton(
+                      onPressed: () {
+                        createSession(context);
+                      },
+                      style:
+                          TextButton.styleFrom(backgroundColor: Colors.white),
+                      child: const Text("Assine agora"),
+                    )
+                  ],
                 ),
               ),
             ),
           ),
         ),
-      // ),
+      ),
     );
   }
 

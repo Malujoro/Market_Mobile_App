@@ -15,6 +15,8 @@ class ProductItemPage extends StatefulWidget {
 class _ProductItemPageState extends State<ProductItemPage>
     with ValidationsMixin, DialogueMixins {
   late Product editedProduct;
+  bool stock = false;
+  bool warningStock = false;
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -22,6 +24,8 @@ class _ProductItemPageState extends State<ProductItemPage>
   TextEditingController priceController = TextEditingController();
   TextEditingController barCodeController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  TextEditingController stockController = TextEditingController();
+  TextEditingController warningStockController = TextEditingController();
 
   bool userEdited = false;
   @override
@@ -36,6 +40,20 @@ class _ProductItemPageState extends State<ProductItemPage>
       priceController.text = editedProduct.price.toString();
       barCodeController.text = editedProduct.barCode;
       descriptionController.text = editedProduct.description;
+
+      stock = editedProduct.stock != null;
+      if (stock) {
+        stockController.text = editedProduct.stock.toString();
+      } else {
+        resetStock(stockController: true);
+      }
+
+      warningStock = editedProduct.warningStock != null;
+      if (warningStock) {
+        warningStockController.text = editedProduct.warningStock.toString();
+      } else {
+        resetWarningStock(warningStockController: true);
+      }
     }
   }
 
@@ -173,6 +191,88 @@ class _ProductItemPageState extends State<ProductItemPage>
                       ),
                     ),
                     const SizedBox(height: 16),
+                    CheckboxListTile(
+                      title: TextFormField(
+                        enabled: stock,
+                        controller: stockController,
+                        keyboardType: TextInputType.number,
+                        validator: (value) => combine([
+                          () => isNotNegative(value),
+                        ]),
+                        onChanged: (value) {
+                          if (value.isEmpty) {
+                            resetStock(all: true);
+                          } else {
+                            editedProduct.stock =
+                                int.parse(stockController.text);
+                          }
+                        },
+                        textInputAction: TextInputAction.next,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        decoration: const InputDecoration(
+                          labelText: "Controle de estoque",
+                        ),
+                      ),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      value: stock,
+                      onChanged: (bool? value) {
+                        userEdited = true;
+                        setState(
+                          () {
+                            stock = value!;
+                            if (!stock) {
+                              resetStock(all: true);
+                              resetWarningStock(all: true);
+                            }
+                          },
+                        );
+                      },
+                    ),
+                    if (stock) const SizedBox(height: 16),
+                    Visibility(
+                      visible: stock,
+                      child: CheckboxListTile(
+                        title: TextFormField(
+                          enabled: warningStock,
+                          controller: warningStockController,
+                          keyboardType: TextInputType.number,
+                          validator: (value) => combine([
+                            () => isNotNegative(value),
+                          ]),
+                          onChanged: (value) {
+                            if (value.isEmpty) {
+                              resetWarningStock(all: true);
+                            } else {
+                              editedProduct.warningStock =
+                                  int.parse(warningStockController.text);
+                            }
+                          },
+                          textInputAction: TextInputAction.next,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
+                          decoration: const InputDecoration(
+                            labelText: "Valor crítico",
+                          ),
+                        ),
+                        controlAffinity: ListTileControlAffinity.leading,
+                        value: warningStock,
+                        onChanged: (bool? value) {
+                          userEdited = true;
+                          setState(
+                            () {
+                              warningStock = value!;
+                              if (!warningStock) {
+                                resetWarningStock(all: true);
+                              }
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
                         touchSave(context);
@@ -182,7 +282,6 @@ class _ProductItemPageState extends State<ProductItemPage>
                         style: TextStyle(fontSize: 25),
                       ),
                     ),
-                    // Text("Teste"),
                   ],
                 ),
               ),
@@ -194,8 +293,42 @@ class _ProductItemPageState extends State<ProductItemPage>
   }
 
   void touchSave(BuildContext context) {
+    if (!stock) {
+      resetStock(all: true);
+      if (!warningStock) {
+        resetWarningStock(all: true);
+      }
+    }
     if (formKey.currentState!.validate()) {
       Navigator.pop(context, editedProduct);
+    }
+  }
+
+  void resetStock({
+    bool all = false,
+    bool stockController = false,
+    bool stockEdited = false,
+  }) {
+    if (stockController || all) {
+      this.stockController.clear();
+    }
+
+    if (stockEdited || all) {
+      editedProduct.stock = null;
+    }
+  }
+
+  void resetWarningStock({
+    bool all = false,
+    bool warningStockController = false,
+    bool warningStockEdited = false,
+  }) {
+    if (warningStockController || all) {
+      this.warningStockController.clear();
+    }
+
+    if (warningStockEdited || all) {
+      editedProduct.warningStock = null;
     }
   }
 }

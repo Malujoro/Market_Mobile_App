@@ -17,7 +17,7 @@ class ProductStore with DialogueMixins {
   ProductStore({required this.repository});
 
   Future getProducts(context, [ProductOrder order = ProductOrder.ascAZ]) async {
-    tryQuery(context, () async {
+    await tryQuery(context, () async {
       final result = await repository.getAllProducts();
       state.value = result;
       switch (order) {
@@ -28,20 +28,20 @@ class ProductStore with DialogueMixins {
   }
 
   Future postProduct(context, Product product) async {
-    tryQuery(context, () async {
+    await tryQuery(context, () async {
       await repository.queryProduct(product, Query.post);
       state.value.add(product);
     });
   }
 
   Future putProduct(context, Product product) async {
-    tryQuery(context, () async {
+    await tryQuery(context, () async {
       await repository.queryProduct(product, Query.put);
     });
   }
 
   Future<void> deleteProduct(context, String barCode) async {
-    tryQuery(context, () async {
+    await tryQuery(context, () async {
       await repository.deleteProduct(barCode);
     });
   }
@@ -51,7 +51,7 @@ class ProductStore with DialogueMixins {
         .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
   }
 
-  void tryQuery(context, Future Function() func) async {
+  Future<void> tryQuery(context, Future Function() func) async {
     isLoading.value = true;
 
     try {

@@ -32,7 +32,7 @@ class SaleProduct with CustomizeMixins {
     return map;
   }
 
-  Widget saleProductWidget(BuildContext context, Function removeProduct) {
+  Widget saleProductWidget(BuildContext context, Function removeProduct, {TextStyle? style}) {
     return Card(
       margin: const EdgeInsets.only(bottom: 0.7),
       shape: const RoundedRectangleBorder(
@@ -65,14 +65,16 @@ class SaleProduct with CustomizeMixins {
                 textAlign: TextAlign.end,
               ),
             ),
-            const SizedBox(
-              width: 8
-            ),
+            const SizedBox(width: 8),
             IconButton(
-                onPressed: () {
-                  removeProduct();
-                },
-                icon: const Icon(Icons.highlight_remove, size: 25,))
+              onPressed: () {
+                removeProduct();
+              },
+              icon: const Icon(
+                Icons.highlight_remove,
+                size: 25,
+              ),
+            )
           ],
         ),
       ),

@@ -8,6 +8,10 @@ import 'package:market_mobile/models/product.dart';
 import 'package:market_mobile/models/sale.dart';
 import 'package:market_mobile/models/sale_product.dart';
 
+// TODO Adicionar o Add automático do código de barras (12 caracteres)
+// TODO Adicionar a Soma automática de produto que já está na venda
+// TODO Adicionar opção de desconto ao finaliar a venda (Desconto em reais ou porcentagem)
+
 class SaleItemPage extends StatefulWidget {
   const SaleItemPage({super.key, required this.products});
 

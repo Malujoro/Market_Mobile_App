@@ -20,7 +20,7 @@ class SaleStore with DialogueMixins {
       [DateTime? start,
       DateTime? end,
       SaleOrder order = SaleOrder.dateAsc]) async {
-    tryQuery(context, () async {
+    await tryQuery(context, () async {
       late List<Sale> result;
       if (start != null && end != null) {
         result = await repository.getAllSales(
@@ -37,13 +37,13 @@ class SaleStore with DialogueMixins {
   }
 
   Future postSale(BuildContext context, Sale sale) async {
-    tryQuery(context, () async {
+    await tryQuery(context, () async {
       await repository.postSale(sale);
     });
   }
 
   Future<void> deleteSale(BuildContext context, int id) async {
-    tryQuery(context, () async {
+    await tryQuery(context, () async {
       await repository.deleteSale(id);
     });
   }
@@ -52,7 +52,7 @@ class SaleStore with DialogueMixins {
     state.value.sort((a, b) => a.date.toString().compareTo(b.date.toString()));
   }
 
-  void tryQuery(context, Future Function() func) async {
+  Future<void> tryQuery(context, Future Function() func) async {
     isLoading.value = true;
 
     try {

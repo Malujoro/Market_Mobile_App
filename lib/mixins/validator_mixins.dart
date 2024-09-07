@@ -15,6 +15,13 @@ mixin ValidationsMixin {
     return null;
   }
 
+  String? isNotNegative(String? value, [String? message]) {
+    if (value!.isNotEmpty && double.parse(value) < 0) {
+      return message ?? "O valor deve maior que 0";
+    }
+    return null;
+  }
+
   String? minLength(String? value, int length, [String? message]) {
     if (value!.isNotEmpty && value.length < length) {
       return message ?? "Mínimo de $length caracteres";

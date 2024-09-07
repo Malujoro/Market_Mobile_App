@@ -3,6 +3,8 @@ import 'package:market_mobile/mixins/customize_mixins.dart';
 import 'package:market_mobile/mixins/hour_mixins.dart';
 import 'package:market_mobile/models/sale_product.dart';
 
+// TODO Arrumar os Json de venda
+
 class Sale with CustomizeMixins, HourMixins {
   List<SaleProduct> saleProducts = [];
   double totalPrice = 0;
@@ -31,7 +33,7 @@ class Sale with CustomizeMixins, HourMixins {
     return map;
   }
 
-  Widget productWidget(BuildContext context) {
+  Widget productWidget(BuildContext context, {TextStyle? style}) {
     return Card(
       margin: const EdgeInsets.only(bottom: 0.7),
       shape: const RoundedRectangleBorder(

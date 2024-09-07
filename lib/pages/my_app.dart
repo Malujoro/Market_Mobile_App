@@ -16,7 +16,7 @@ import 'package:market_mobile/repositories/product_repository.dart';
 import 'package:market_mobile/stores/sale_store.dart';
 // const Color.fromARGB(255, 243, 236, 245)
 
-// TODO: Talvez criar uma ação no Appbar para escolher como ordenar produtos e/ou vendas
+// TODO: Criar ação no Appbar para escolher como ordenar produtos e/ou vendas
 
 class MyApp extends StatefulWidget {
   const MyApp(this.jwt, this.payload, {super.key});
