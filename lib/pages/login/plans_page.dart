@@ -20,14 +20,16 @@ class _PlansPageState extends State<PlansPage>
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: goBackDialogueAlter(
-        context: context,
-        title: "Já está indo?",
-        content: "Deseja voltar para a tela de início?",
-        confirmFunc: () {
-          Navigator.popUntil(
-              context, ModalRoute.withName(Navigator.defaultRouteName));
-        },
+      // TODO ativar caso queira o pop up de saída da tela de plano
+      // child: goBackDialogueAlter(
+      //   context: context,
+      //   title: "Já está indo?",
+      //   content: "Deseja voltar para a tela de início?",
+        // 
+        // confirmFunc: () {
+        //   Navigator.popUntil(
+        //       context, ModalRoute.withName(Navigator.defaultRouteName));
+        // },
         child: Scaffold(
           appBar: AppBar(
             title: const Text("Planos"),
@@ -76,7 +78,7 @@ class _PlansPageState extends State<PlansPage>
             ),
           ),
         ),
-      ),
+      // ),
     );
   }
 

@@ -60,19 +60,21 @@ class SaleStore with DialogueMixins {
     } on NotFoundException catch (e) {
       error.value = e.message;
     } on InvalidSessionException catch (e) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const PlansPage(),
-        ),
-      );
-      displayDialog(
-        context,
-        const Text("Erro!"),
-        Text(
-          e.toString(),
-        ),
-      );
+      if (context.mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PlansPage(),
+          ),
+        );
+        displayDialog(
+          context,
+          const Text("Erro!"),
+          Text(
+            e.toString(),
+          ),
+        );
+      }
     } catch (e) {
       error.value = e.toString();
     }
