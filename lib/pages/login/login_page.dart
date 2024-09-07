@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:market_mobile/mixins/dialogue_mixins.dart';
+import 'package:market_mobile/mixins/query_mixins.dart';
 import 'package:market_mobile/mixins/token_mixins.dart';
 import 'package:market_mobile/mixins/validator_mixins.dart';
 import 'package:http/http.dart' as http;
@@ -18,12 +18,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage>
-    with ValidationsMixin, TokenMixins, DialogueMixins {
+    with ValidationsMixin, TokenMixins, DialogueMixins, QueryMixins {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
-
-  // final storage = const FlutterSecureStorage();
 
   TextEditingController emailController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
@@ -37,7 +35,7 @@ class _LoginPageState extends State<LoginPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      loginAuto();
+      loginAuto(context);
     });
   }
 
@@ -68,8 +66,7 @@ class _LoginPageState extends State<LoginPage>
                         validator: (value) => combine([
                           () => isNotEmpty(value),
                           () => minLength(value, 2),
-                          // TODO: Reativar a validação do email
-                          // () => emailValid(value),
+                          () => emailValid(value),
                         ]),
                         onChanged: (value) {
                           userEdited = true;
@@ -199,40 +196,34 @@ class _LoginPageState extends State<LoginPage>
     );
   }
 
-  void goToMyApp(String jwt) {
+  void goToMyApp(BuildContext context, String jwt) {
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => MyApp.fromBase64(jwt)));
   }
 
-  Future<void> loginAuto() async {
+  Future<void> loginAuto(BuildContext context) async {
     var jwt = await tokenGet();
 
     if (jwt != null && jwt.isNotEmpty) {
       bool expired = JwtDecoder.isExpired(jwt);
-      if (!expired) {
-        goToMyApp(jwt);
+      if (!expired && context.mounted) {
+        goToMyApp(context, jwt);
       }
     }
   }
 
   void touchLogin(BuildContext context) async {
     if (formKey.currentState!.validate()) {
-      var jwt =
-          await attemptLogin(emailController.text, passwordController.text);
+      var jwt = await attemptLogin(
+          context, emailController.text, passwordController.text);
 
       if (jwt != null) {
         usernameController.clear();
         passwordController.clear();
 
         tokenSet(jwt);
-        goToMyApp(jwt);
-      } else {
         if (context.mounted) {
-          displayDialog(
-            context,
-            const Text("Tentativa de Login"),
-            const Text("Erro! Usuário ou senha inválidos"),
-          );
+          goToMyApp(context, jwt);
         }
       }
     }
@@ -262,6 +253,7 @@ class _LoginPageState extends State<LoginPage>
   }
 
   Future<String?> attemptLogin(
+    BuildContext context,
     String email,
     String password,
   ) async {
@@ -285,6 +277,22 @@ class _LoginPageState extends State<LoginPage>
           jsonDecode(await response.stream.bytesToString());
       String token = mapa["token"].toString();
       return token;
+    } else if (response.statusCode == 403) {
+      if (context.mounted) {
+        displayDialog(
+          context,
+          const Text("Tentativa de Login"),
+          const Text("Erro! Usuário inexistente ou senha inválida"),
+        );
+      }
+    } else {
+      if (context.mounted) {
+        displayDialog(
+          context,
+          Text("Erro ${response.statusCode}"),
+          const Text("Contate os desenvolvedores"),
+        );
+      }
     }
     return null;
   }

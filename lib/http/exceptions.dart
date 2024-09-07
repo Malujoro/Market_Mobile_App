@@ -3,16 +3,31 @@ class NotFoundException implements Exception {
   final String message;
 
   NotFoundException(this.message);
+
+  @override
+  String toString() {
+    return message;
+  }
 }
 
-class ExpiredToken implements Exception {
+class ExpiredTokenException implements Exception {
   final String message;
 
-  ExpiredToken(this.message);
+  ExpiredTokenException(this.message);
+
+  @override
+  String toString() {
+    return message;
+  }
 }
 
-class BadRequest implements Exception {
+class InvalidSessionException implements Exception {
   final String message;
 
-  BadRequest(this.message);
+  InvalidSessionException(this.message);
+
+  @override
+  String toString() {
+    return message;
+  }
 }

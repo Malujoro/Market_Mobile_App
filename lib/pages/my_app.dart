@@ -91,7 +91,7 @@ class _MyAppState extends State<MyApp> with DialogueMixins, TokenMixins {
                       height: 75,
                       child: FloatingActionButton(
                         onPressed: () {
-                          showProductItemPage();
+                          showProductItemPage(context);
                         },
                         child: const Icon(Icons.add, size: 64),
                       ),
@@ -140,7 +140,7 @@ class _MyAppState extends State<MyApp> with DialogueMixins, TokenMixins {
     );
   }
 
-  void showProductItemPage({Product? product}) async {
+  void showProductItemPage(BuildContext context, {Product? product}) async {
     final Product? retProduct = await Navigator.push(
       context,
       MaterialPageRoute<Product>(
@@ -149,11 +149,11 @@ class _MyAppState extends State<MyApp> with DialogueMixins, TokenMixins {
         ),
       ),
     );
-    if (retProduct != null) {
+    if (retProduct != null && context.mounted) {
       if (product != null) {
-        await productStore.putProduct(retProduct);
+        await productStore.putProduct(context, retProduct);
       } else {
-        await productStore.postProduct(retProduct);
+        await productStore.postProduct(context, retProduct);
       }
       setState(() {
         productStore.getProducts(ProductOrder.ascAZ);

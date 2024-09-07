@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:market_mobile/mixins/dialogue_mixins.dart';
 import 'package:market_mobile/models/product.dart';
 import 'package:market_mobile/models/sale.dart';
@@ -30,7 +29,7 @@ class _HomePageState extends State<HomePage> with DialogueMixins {
 
     productStore = widget.productStore;
     if (productStore.state.value.isEmpty) {
-      productStore.getProducts();
+      productStore.getProducts(context);
     }
   }
 
@@ -40,36 +39,12 @@ class _HomePageState extends State<HomePage> with DialogueMixins {
       child: AnimatedBuilder(
         animation: Listenable.merge([
           productStore.isLoading,
-          productStore.error,
           productStore.state,
           saleStore.isLoading,
-          saleStore.error,
         ]),
         builder: (context, child) {
           if (productStore.isLoading.value || saleStore.isLoading.value) {
             return const CircularProgressIndicator();
-          }
-
-          if (productStore.error.value.isNotEmpty) {
-            SchedulerBinding.instance.addPostFrameCallback((_) {
-              displayDialog(
-                context,
-                const Text("Erro!"),
-                Text(productStore.error.value),
-              );
-              productStore.error.value = "";
-            });
-          }
-
-          if (saleStore.error.value.isNotEmpty) {
-            SchedulerBinding.instance.addPostFrameCallback((_) {
-              displayDialog(
-                context,
-                const Text("Erro!"),
-                Text(saleStore.error.value),
-              );
-              saleStore.error.value = "";
-            });
           }
 
           return Card(
@@ -96,7 +71,7 @@ class _HomePageState extends State<HomePage> with DialogueMixins {
                   onPressed: productStore.state.value.isEmpty
                       ? null
                       : () {
-                          showSaleItemPage(productStore.state.value);
+                          showSaleItemPage(context, productStore.state.value);
                         },
                   style:
                       ElevatedButton.styleFrom(backgroundColor: Colors.white),
@@ -110,15 +85,15 @@ class _HomePageState extends State<HomePage> with DialogueMixins {
     );
   }
 
-  void showSaleItemPage(List<Product> products) async {
+  void showSaleItemPage(BuildContext context, List<Product> products) async {
     final Sale? retSale = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => SaleItemPage(products: products),
       ),
     );
-    if (retSale != null) {
-      await saleStore.postSale(retSale);
+    if (retSale != null && context.mounted) {
+      await saleStore.postSale(context, retSale);
     }
   }
 }

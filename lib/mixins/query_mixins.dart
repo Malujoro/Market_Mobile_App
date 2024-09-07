@@ -7,7 +7,9 @@ mixin QueryMixins {
     } else if (responseCode == 404) {
       throw NotFoundException("A URL informada não é válida");
     } else if (responseCode == 401) {
-      throw ExpiredToken("Sessão expirada");
+      throw ExpiredTokenException("Sessão expirada");
+    } else if (responseCode == 403) {
+      throw InvalidSessionException("A assinatura não está ativa");
     } else {
       throw Exception(text ?? "Erro $responseCode");
     }

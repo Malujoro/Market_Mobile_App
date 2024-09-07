@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:market_mobile/mixins/dialogue_mixins.dart';
 import 'package:market_mobile/mixins/hour_mixins.dart';
 import 'package:market_mobile/models/sale.dart';
 import 'package:market_mobile/stores/sale_store.dart';
+
+// Todo fazer o remover venda (e talvez um abrir página para verificar os produtos daquela venda)
 
 enum Day { day, week, month, year, all }
 
@@ -42,7 +43,7 @@ class _InsightsPageState extends State<InsightsPage>
     dropdownIndex = widget.dropdownIndex[0];
     dropdownValue = dayList[dropdownIndex];
     if (saleStore.state.value.isEmpty) {
-      loadSales();
+      loadSales(context);
     }
   }
 
@@ -51,23 +52,11 @@ class _InsightsPageState extends State<InsightsPage>
     return AnimatedBuilder(
       animation: Listenable.merge([
         saleStore.isLoading,
-        saleStore.error,
         saleStore.state,
       ]),
       builder: (context, child) {
         if (saleStore.isLoading.value) {
           return const CircularProgressIndicator();
-        }
-
-        if (saleStore.error.value.isNotEmpty) {
-          SchedulerBinding.instance.addPostFrameCallback((_) {
-            displayDialog(
-              context,
-              const Text("Erro!"),
-              Text(saleStore.error.value),
-            );
-            saleStore.error.value = "";
-          });
         }
 
         return Column(
@@ -94,7 +83,7 @@ class _InsightsPageState extends State<InsightsPage>
                             start = null;
                             end = null;
                           });
-                          loadSales();
+                          loadSales(context);
                         }
                       },
                       items: [
@@ -113,10 +102,10 @@ class _InsightsPageState extends State<InsightsPage>
                         errorFormatText: "dia/mês/ano",
                         keyboardType: TextInputType.text,
                       );
-                      if (result != null) {
+                      if (result != null && context.mounted) {
                         start = result.start;
                         end = result.end;
-                        saleStore.getSales(start, end);
+                        saleStore.getSales(context, start, end);
                       }
                     },
                     child: const Icon(
@@ -167,12 +156,12 @@ class _InsightsPageState extends State<InsightsPage>
     );
   }
 
-  void loadSales([between]) {
+  void loadSales(BuildContext context) {
     dropdownIndex = dayList.indexOf(dropdownValue);
     widget.dropdownIndex[0] = dropdownIndex;
 
     if (dropdownIndex == Day.all.index) {
-      saleStore.getSales();
+      saleStore.getSales(context);
       return;
     }
 
@@ -211,6 +200,6 @@ class _InsightsPageState extends State<InsightsPage>
         end!.microsecond,
       );
     }
-    saleStore.getSales(start, end);
+    saleStore.getSales(context, start, end);
   }
 }

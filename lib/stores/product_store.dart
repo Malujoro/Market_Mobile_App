@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:market_mobile/http/exceptions.dart';
+import 'package:market_mobile/mixins/dialogue_mixins.dart';
 import 'package:market_mobile/models/product.dart';
+import 'package:market_mobile/pages/login/plans_page.dart';
 import 'package:market_mobile/repositories/product_repository.dart';
 
 enum ProductOrder { ascAZ }
 
-class ProductStore {
+class ProductStore with DialogueMixins {
   final InterfaceProductRepository repository;
 
   final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
@@ -14,70 +16,66 @@ class ProductStore {
 
   ProductStore({required this.repository});
 
-  Future getProducts([ProductOrder order = ProductOrder.ascAZ]) async {
-    isLoading.value = true;
-
-    try {
+  Future getProducts(context, [ProductOrder order = ProductOrder.ascAZ]) async {
+    tryQuery(context, () async {
       final result = await repository.getAllProducts();
       state.value = result;
       switch (order) {
         case ProductOrder.ascAZ:
           orderNameAsc();
       }
-    } on NotFoundException catch (e) {
-      error.value = e.message;
-    } catch (e) {
-      error.value = e.toString();
-    }
-
-    isLoading.value = false;
+    });
   }
 
-  Future postProduct(Product product) async {
-    isLoading.value = true;
-
-    try {
+  Future postProduct(context, Product product) async {
+    tryQuery(context, () async {
       await repository.queryProduct(product, Query.post);
       state.value.add(product);
-    } on NotFoundException catch (e) {
-      error.value = e.message;
-    } catch (e) {
-      error.value = e.toString();
-    }
-
-    isLoading.value = false;
+    });
   }
 
-  Future putProduct(Product product) async {
-    isLoading.value = true;
-
-    try {
+  Future putProduct(context, Product product) async {
+    tryQuery(context, () async {
       await repository.queryProduct(product, Query.put);
-    } on NotFoundException catch (e) {
-      error.value = e.message;
-    } catch (e) {
-      error.value = e.toString();
-    }
-
-    isLoading.value = false;
+    });
   }
 
-  Future<void> deleteProduct(String barCode) async {
-    isLoading.value = true;
-
-    try {
+  Future<void> deleteProduct(context, String barCode) async {
+    tryQuery(context, () async {
       await repository.deleteProduct(barCode);
-    } on NotFoundException catch (e) {
-      error.value = e.message;
-    } catch (e) {
-      error.value = e.toString();
-    }
-
-    isLoading.value = false;
+    });
   }
 
   void orderNameAsc() {
     state.value
         .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+  }
+
+  void tryQuery(context, Future Function() func) async {
+    isLoading.value = true;
+
+    try {
+      await func();
+    } on NotFoundException catch (e) {
+      error.value = e.message;
+    } on InvalidSessionException catch (e) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const PlansPage(),
+        ),
+      );
+      displayDialog(
+        context,
+        const Text("Erro!"),
+        Text(
+          e.toString(),
+        ),
+      );
+    } catch (e) {
+      error.value = e.toString();
+    }
+
+    isLoading.value = false;
   }
 }
