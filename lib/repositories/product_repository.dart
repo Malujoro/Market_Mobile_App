@@ -5,8 +5,6 @@ import 'package:market_mobile/mixins/query_mixins.dart';
 import 'package:market_mobile/http/http_client.dart';
 import 'package:market_mobile/models/product.dart';
 
-// TODO Arrumar url
-
 enum Query { put, post }
 
 abstract class InterfaceProductRepository {

@@ -6,8 +6,6 @@ import 'package:market_mobile/mixins/query_mixins.dart';
 import 'package:market_mobile/http/http_client.dart';
 import 'package:market_mobile/models/sale.dart';
 
-// TODO Arrumar url
-
 abstract class InterfaceSaleRepository {
   Future<List<Sale>> getAllSales([String? start, String? end]);
   Future<void> postSale(Sale sale);

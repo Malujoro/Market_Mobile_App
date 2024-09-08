@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:market_mobile/mixins/dialogue_mixins.dart';
 import 'package:market_mobile/models/product.dart';
 import 'package:market_mobile/models/sale.dart';
-import 'package:market_mobile/pages/sale/sale_item_page.dart';
+import 'package:market_mobile/pages/sale/sale_page.dart';
 import 'package:market_mobile/stores/product_store.dart';
 import 'package:market_mobile/stores/sale_store.dart';
 
@@ -89,11 +89,14 @@ class _HomePageState extends State<HomePage> with DialogueMixins {
     final Sale? retSale = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SaleItemPage(products: products),
+        builder: (context) => SalePage(products: products),
       ),
     );
     if (retSale != null && context.mounted) {
       await saleStore.postSale(context, retSale);
+    }
+    if (context.mounted) {
+      await saleStore.getSales(context);
     }
   }
 }

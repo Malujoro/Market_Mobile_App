@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:market_mobile/mixins/dialogue_mixins.dart';
 import 'package:market_mobile/mixins/hour_mixins.dart';
 import 'package:market_mobile/models/sale.dart';
+import 'package:market_mobile/pages/sale/sale_item_page.dart';
 import 'package:market_mobile/stores/sale_store.dart';
-
-// TODO fazer o remover venda (e talvez um abrir página para verificar os produtos daquela venda)
 
 enum Day { day, week, month, year, all }
 
@@ -145,7 +144,18 @@ class _InsightsPageState extends State<InsightsPage>
                         ]
                       : [
                           for (Sale sale in saleStore.state.value)
-                            sale.productWidget(context)
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SaleItemPage(
+                                              sale: sale,
+                                              showOnly: true,
+                                            )));
+                              },
+                              child: sale.productWidget(context),
+                            )
                         ],
                 ),
               ),

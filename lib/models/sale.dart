@@ -3,12 +3,11 @@ import 'package:market_mobile/mixins/customize_mixins.dart';
 import 'package:market_mobile/mixins/hour_mixins.dart';
 import 'package:market_mobile/models/sale_product.dart';
 
-// TODO Arrumar os Json de venda
-
 class Sale with CustomizeMixins, HourMixins {
   List<SaleProduct> saleProducts = [];
   double totalPrice = 0;
   late DateTime date;
+  double? discount;
 
   Sale();
 
@@ -20,6 +19,7 @@ class Sale with CustomizeMixins, HourMixins {
     ];
     sale.totalPrice = map["totalPrice"];
     sale.date = DateTime.parse(map["date"]);
+    sale.discount = map["discount"];
     return sale;
   }
 
@@ -29,6 +29,7 @@ class Sale with CustomizeMixins, HourMixins {
         for (SaleProduct saleProduct in saleProducts) saleProduct.toMap()
       ],
       "totalPrice": totalPrice,
+      "discount": discount,
     };
     return map;
   }
@@ -47,15 +48,25 @@ class Sale with CustomizeMixins, HourMixins {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // richTextCreator("ID: ", id),
             richTextCreator(
+              context: context,
+              label: "Preço total: ",
+              text: "R\$${totalPrice.toStringAsFixed(2)}",
+              style: style,
+            ),
+            if (discount != null)
+              richTextCreator(
                 context: context,
-                label: "Preço total: ",
-                text: "R\$${totalPrice.toStringAsFixed(2)}"),
+                label: "Desconto: R\$",
+                text: discount!.toStringAsFixed(2),
+                style: style,
+              ),
             richTextCreator(
-                context: context,
-                label: "Data: ",
-                text: timeToString(date.subtract(const Duration(hours: 3)))),
+              context: context,
+              label: "Data: ",
+              text: timeToString(date.subtract(const Duration(hours: 3))),
+              style: style,
+            ),
           ],
         ),
       ),
@@ -68,5 +79,27 @@ class Sale with CustomizeMixins, HourMixins {
       totalPrice += saleProduct.partialPrice * saleProduct.quantity;
     }
     return totalPrice;
+  }
+
+  void calculateDiscount(double value,
+      {bool percentual = false, bool reset = false}) {
+    calculateTotalPrice();
+
+    if (reset) {
+      discount = null;
+      return;
+    }
+
+    if (percentual) {
+      discount = value / 100 * totalPrice;
+    } else {
+      discount = value;
+    }
+
+    if (discount! <= totalPrice) {
+      totalPrice -= discount!;
+    } else {
+      discount = null;
+    }
   }
 }

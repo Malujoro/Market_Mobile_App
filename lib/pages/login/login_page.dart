@@ -265,8 +265,6 @@ class _LoginPageState extends State<LoginPage>
     Map<String, String> headers = {'Content-Type': 'application/json'};
     var request = http.Request(
       'POST',
-      // TODO Arrumar url
-      // Uri.parse('https://marketmobile-api.onrender.com/auth/login'),
       Uri.parse(urlLogin),
     );
     request.body = json.encode({
@@ -312,8 +310,6 @@ class _LoginPageState extends State<LoginPage>
     Map<String, String> headers = {'Content-Type': 'application/json'};
     var request = http.Request(
       'POST',
-      // TODO Arrumar url
-      // Uri.parse('https://marketmobile-api.onrender.com/auth/register'),
       Uri.parse(urlRegister),
     );
     request.body = json.encode({

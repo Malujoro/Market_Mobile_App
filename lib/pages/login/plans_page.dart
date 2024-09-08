@@ -6,8 +6,6 @@ import 'package:market_mobile/mixins/token_mixins.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
-// TODO Arrumar url
-
 class PlansPage extends StatefulWidget {
   const PlansPage({super.key});
 

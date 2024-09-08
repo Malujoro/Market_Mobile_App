@@ -58,22 +58,44 @@ class Product with CustomizeMixins {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            richTextCreator(context: context, label: "Código: ", text: barCode),
-            richTextCreator(context: context, label: "Nome: ", text: name),
             richTextCreator(
-                context: context,
-                label: "Preço: ",
-                text: "R\$${price.toStringAsFixed(2)}"),
+              context: context,
+              label: "Código: ",
+              text: barCode,
+              style: style,
+            ),
+            richTextCreator(
+              context: context,
+              label: "Nome: ",
+              text: name,
+              style: style,
+            ),
+            richTextCreator(
+              context: context,
+              label: "Preço: ",
+              text: "R\$${price.toStringAsFixed(2)}",
+              style: style,
+            ),
             if (stock != null)
               richTextCreator(
-                  context: context, label: "Estoque: ", text: stock.toString()),
+                context: context,
+                label: "Estoque: ",
+                text: stock.toString(),
+                style: style,
+              ),
             if (warningStock != null)
               richTextCreator(
-                  context: context,
-                  label: "Crítico: ",
-                  text: warningStock.toString()),
+                context: context,
+                label: "Crítico: ",
+                text: warningStock.toString(),
+                style: style,
+              ),
             richTextCreator(
-                context: context, label: "Descrição: ", text: description),
+              context: context,
+              label: "Descrição: ",
+              text: description,
+              style: style,
+            ),
           ],
         ),
       ),
