@@ -71,69 +71,73 @@ class _MyAppState extends State<MyApp> with DialogueMixins, TokenMixins {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: goBackDialogueAlter(
-        context: context,
-        title: "Efetuar logout?",
-        content: "Você irá voltar para a tela de login",
-        confirmFunc: () {
-          tokenSet("");
-        },
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text("Logo"),
-          ),
-          floatingActionButton:
-              currentPageIndex != 2 || productStore.isLoading.value
-                  ? null
-                  : SizedBox(
-                      width: 75,
-                      height: 75,
-                      child: FloatingActionButton(
-                        onPressed: () {
-                          showProductItemPage(context);
-                        },
-                        child: const Icon(Icons.add, size: 64),
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: SafeArea(
+        child: goBackDialogueAlter(
+          context: context,
+          title: "Efetuar logout?",
+          content: "Você irá voltar para a tela de login",
+          confirmFunc: () {
+            tokenSet("");
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text("Logo"),
+            ),
+            floatingActionButton:
+                currentPageIndex != 2 || productStore.isLoading.value
+                    ? null
+                    : SizedBox(
+                        width: 75,
+                        height: 75,
+                        child: FloatingActionButton(
+                          onPressed: () {
+                            showProductItemPage(context);
+                          },
+                          child: const Icon(Icons.add, size: 64),
+                        ),
                       ),
-                    ),
-          bottomNavigationBar: NavigationBar(
-            onDestinationSelected: (int index) {
-              setState(() {
-                currentPageIndex = index;
-              });
-            },
-            selectedIndex: currentPageIndex,
-            destinations: const [
-              NavigationDestination(
-                icon: Icon(Icons.home, size: 64),
-                label: "Home",
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.bar_chart, size: 64),
-                label: "Insights",
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.shopping_bag_outlined, size: 64),
-                label: "Produtos",
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.person_outline, size: 64),
-                label: "Perfil",
-              ),
-            ],
-          ),
-          body: Center(
-            child: [
-              HomePage(
-                productStore: productStore,
-                saleStore: saleStore,
-              ),
-              InsightsPage(dropdownIndex: dropdownIndex, saleStore: saleStore),
-              ProductPage(
-                  store: productStore,
-                  showProductItemPage: showProductItemPage),
-              const UserPage(),
-            ][currentPageIndex],
+            bottomNavigationBar: NavigationBar(
+              onDestinationSelected: (int index) {
+                setState(() {
+                  currentPageIndex = index;
+                });
+              },
+              selectedIndex: currentPageIndex,
+              destinations: const [
+                NavigationDestination(
+                  icon: Icon(Icons.home, size: 64),
+                  label: "Home",
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.bar_chart, size: 64),
+                  label: "Insights",
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.shopping_bag_outlined, size: 64),
+                  label: "Produtos",
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.person_outline, size: 64),
+                  label: "Perfil",
+                ),
+              ],
+            ),
+            body: Center(
+              child: [
+                HomePage(
+                  productStore: productStore,
+                  saleStore: saleStore,
+                ),
+                InsightsPage(
+                    dropdownIndex: dropdownIndex, saleStore: saleStore),
+                ProductPage(
+                    store: productStore,
+                    showProductItemPage: showProductItemPage),
+                const UserPage(),
+              ][currentPageIndex],
+            ),
           ),
         ),
       ),

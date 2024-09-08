@@ -42,54 +42,34 @@ class _LoginPageState extends State<LoginPage>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: AnimatedBuilder(
-          animation: Listenable.merge([isLoading]),
-          builder: (context, child) {
-            if (isLoading.value) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-
-            return Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextFormField(
-                        controller: emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        validator: (value) => combine([
-                          () => isNotEmpty(value),
-                          () => minLength(value, 2),
-                          () => emailValid(value),
-                        ]),
-                        onChanged: (value) {
-                          userEdited = true;
-                        },
-                        textInputAction: TextInputAction.next,
-                        inputFormatters: [
-                          LengthLimitingTextInputFormatter(100),
-                        ],
-                        decoration: const InputDecoration(
-                          prefixIcon: Icon(Icons.email),
-                          labelText: "Email",
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Visibility(
-                        visible: register,
-                        child: TextFormField(
-                          controller: usernameController,
-                          keyboardType: TextInputType.text,
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: SafeArea(
+        child: Scaffold(
+          body: AnimatedBuilder(
+            animation: Listenable.merge([isLoading]),
+            builder: (context, child) {
+              if (isLoading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+      
+              return Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextFormField(
+                          controller: emailController,
+                          keyboardType: TextInputType.emailAddress,
                           validator: (value) => combine([
                             () => isNotEmpty(value),
                             () => minLength(value, 2),
+                            () => emailValid(value),
                           ]),
                           onChanged: (value) {
                             userEdited = true;
@@ -99,99 +79,122 @@ class _LoginPageState extends State<LoginPage>
                             LengthLimitingTextInputFormatter(100),
                           ],
                           decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.person),
-                            labelText: "Nome de usuário",
+                            prefixIcon: Icon(Icons.email),
+                            labelText: "Email",
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        obscureText: !passwordVisible,
-                        controller: passwordController,
-                        validator: (value) => combine([
-                          () => isNotEmpty(value),
-                          // TODO: Reativar a validação do senha
-                          // () => minLength(value, 8),
-                        ]),
-                        onChanged: (value) {
-                          userEdited = true;
-                        },
-                        // textInputAction: TextInputAction.,
-                        textInputAction: TextInputAction.done,
-                        onFieldSubmitted: (value) {
-                          if (register) {
-                            touchRegister(context);
-                          } else {
-                            touchLogin(context);
-                          }
-                        },
-                        inputFormatters: [
-                          LengthLimitingTextInputFormatter(100),
-                        ],
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.lock),
-                          labelText: "Senha",
-                          suffixIcon: IconButton(
-                            icon: Icon(passwordVisible == true
-                                ? Icons.visibility
-                                : Icons.visibility_off),
-                            onPressed: () {
-                              setState(() {
-                                passwordVisible = !passwordVisible;
-                              });
+                        const SizedBox(height: 16),
+                        Visibility(
+                          visible: register,
+                          child: TextFormField(
+                            controller: usernameController,
+                            keyboardType: TextInputType.text,
+                            validator: (value) => combine([
+                              () => isNotEmpty(value),
+                              () => minLength(value, 2),
+                            ]),
+                            onChanged: (value) {
+                              userEdited = true;
                             },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () async {
-                              if (register) {
-                                setState(() {
-                                  register = false;
-                                });
-                                return;
-                              }
-
-                              touchLogin(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                                fixedSize: const Size(150, 50)),
-                            child: const Text(
-                              "Login",
-                              style: TextStyle(fontSize: 16),
+                            textInputAction: TextInputAction.next,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(100),
+                            ],
+                            decoration: const InputDecoration(
+                              prefixIcon: Icon(Icons.person),
+                              labelText: "Nome de usuário",
                             ),
                           ),
-                          const SizedBox(width: 30),
-                          ElevatedButton(
-                            onPressed: () async {
-                              if (!register) {
-                                setState(() {
-                                  register = true;
-                                });
-                                return;
-                              }
-
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          obscureText: !passwordVisible,
+                          controller: passwordController,
+                          validator: (value) => combine([
+                            () => isNotEmpty(value),
+                            // TODO: Reativar a validação do senha
+                            // () => minLength(value, 8),
+                          ]),
+                          onChanged: (value) {
+                            userEdited = true;
+                          },
+                          // textInputAction: TextInputAction.,
+                          textInputAction: TextInputAction.done,
+                          onFieldSubmitted: (value) {
+                            if (register) {
                               touchRegister(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                                fixedSize: const Size(150, 50)),
-                            child: const Text(
-                              "Registrar-se",
-                              style: TextStyle(fontSize: 16),
+                            } else {
+                              touchLogin(context);
+                            }
+                          },
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(100),
+                          ],
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.lock),
+                            labelText: "Senha",
+                            suffixIcon: IconButton(
+                              icon: Icon(passwordVisible == true
+                                  ? Icons.visibility
+                                  : Icons.visibility_off),
+                              onPressed: () {
+                                setState(() {
+                                  passwordVisible = !passwordVisible;
+                                });
+                              },
                             ),
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () async {
+                                if (register) {
+                                  setState(() {
+                                    register = false;
+                                  });
+                                  return;
+                                }
+      
+                                touchLogin(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  fixedSize: const Size(150, 50)),
+                              child: const Text(
+                                "Login",
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ),
+                            const SizedBox(width: 30),
+                            ElevatedButton(
+                              onPressed: () async {
+                                if (!register) {
+                                  setState(() {
+                                    register = true;
+                                  });
+                                  return;
+                                }
+      
+                                touchRegister(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  fixedSize: const Size(150, 50)),
+                              child: const Text(
+                                "Registrar-se",
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
