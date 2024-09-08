@@ -4,7 +4,7 @@ import 'package:market_mobile/mixins/hour_mixins.dart';
 import 'package:market_mobile/models/sale.dart';
 import 'package:market_mobile/stores/sale_store.dart';
 
-// Todo fazer o remover venda (e talvez um abrir página para verificar os produtos daquela venda)
+// TODO fazer o remover venda (e talvez um abrir página para verificar os produtos daquela venda)
 
 enum Day { day, week, month, year, all }
 

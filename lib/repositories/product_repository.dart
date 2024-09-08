@@ -1,10 +1,11 @@
 import 'dart:convert';
 
+import 'package:market_mobile/assets/constants.dart';
 import 'package:market_mobile/mixins/query_mixins.dart';
 import 'package:market_mobile/http/http_client.dart';
 import 'package:market_mobile/models/product.dart';
 
-const String url = "https://marketmobile-api.onrender.com/product";
+// TODO Arrumar url
 
 enum Query { put, post }
 
@@ -22,7 +23,7 @@ class ProductRepository with QueryMixins implements InterfaceProductRepository {
 
   @override
   Future<List<Product>> getAllProducts() async {
-    final response = await client.get(url: url, token: jwt);
+    final response = await client.get(url: urlProduct, token: jwt);
 
     if (verifyQuery(
       response.statusCode,
@@ -58,7 +59,7 @@ class ProductRepository with QueryMixins implements InterfaceProductRepository {
     }
 
     final response = await client.query(
-      url: url,
+      url: urlProduct,
       token: jwt,
       map: product.toMap(),
       type: query,
@@ -70,7 +71,7 @@ class ProductRepository with QueryMixins implements InterfaceProductRepository {
   @override
   Future<void> deleteProduct(String barCode) async {
     final response = await client.delete(
-      url: url,
+      url: urlProduct,
       token: jwt,
       id: barCode,
     );

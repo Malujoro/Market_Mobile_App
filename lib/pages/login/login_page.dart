@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:market_mobile/assets/constants.dart';
 import 'package:market_mobile/mixins/dialogue_mixins.dart';
 import 'package:market_mobile/mixins/query_mixins.dart';
 import 'package:market_mobile/mixins/token_mixins.dart';
@@ -261,7 +262,9 @@ class _LoginPageState extends State<LoginPage>
     Map<String, String> headers = {'Content-Type': 'application/json'};
     var request = http.Request(
       'POST',
-      Uri.parse('https://marketmobile-api.onrender.com/auth/login'),
+      // TODO Arrumar url
+      // Uri.parse('https://marketmobile-api.onrender.com/auth/login'),
+      Uri.parse(urlLogin),
     );
     request.body = json.encode({
       "email": email.toLowerCase(),
@@ -306,7 +309,9 @@ class _LoginPageState extends State<LoginPage>
     Map<String, String> headers = {'Content-Type': 'application/json'};
     var request = http.Request(
       'POST',
-      Uri.parse('https://marketmobile-api.onrender.com/auth/register'),
+      // TODO Arrumar url
+      // Uri.parse('https://marketmobile-api.onrender.com/auth/register'),
+      Uri.parse(urlRegister),
     );
     request.body = json.encode({
       "email": email.toLowerCase(),

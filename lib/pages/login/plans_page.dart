@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:market_mobile/assets/constants.dart';
 import 'package:market_mobile/mixins/dialogue_mixins.dart';
 import 'package:market_mobile/mixins/query_mixins.dart';
 import 'package:market_mobile/mixins/token_mixins.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
-const String url =
-    "https://marketmobile-api.onrender.com/api/sub/create-checkout-session";
+// TODO Arrumar url
 
 class PlansPage extends StatefulWidget {
   const PlansPage({super.key});
@@ -86,7 +86,7 @@ class _PlansPageState extends State<PlansPage>
         final client = http.Client();
 
         var response = await client.post(
-          Uri.parse(url),
+          Uri.parse(urlSession),
           headers: {'Authorization': 'Bearer $jwt'},
         );
 

@@ -1,11 +1,12 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:market_mobile/assets/constants.dart';
 import 'package:market_mobile/mixins/query_mixins.dart';
 import 'package:market_mobile/http/http_client.dart';
 import 'package:market_mobile/models/sale.dart';
 
-const String url = "https://marketmobile-api.onrender.com/sale";
+// TODO Arrumar url
 
 abstract class InterfaceSaleRepository {
   Future<List<Sale>> getAllSales([String? start, String? end]);
@@ -24,9 +25,9 @@ class SaleRepository with QueryMixins implements InterfaceSaleRepository {
     Response response;
     if (start != null && end != null) {
       response = await client.get(
-          url: "$url/between?startDate=$start&endDate=$end", token: jwt);
+          url: "$urlSale/between?startDate=$start&endDate=$end", token: jwt);
     } else {
-      response = await client.get(url: url, token: jwt);
+      response = await client.get(url: urlSale, token: jwt);
     }
 
     if (verifyQuery(
@@ -51,7 +52,7 @@ class SaleRepository with QueryMixins implements InterfaceSaleRepository {
   @override
   Future<void> postSale(Sale sale) async {
     final response = await client.query(
-      url: url,
+      url: urlSale,
       token: jwt,
       map: sale.toMap(),
       type: 'POST',
@@ -63,7 +64,7 @@ class SaleRepository with QueryMixins implements InterfaceSaleRepository {
   @override
   Future<void> deleteSale(int id) async {
     final response = await client.delete(
-      url: url,
+      url: urlSale,
       token: jwt,
       id: id.toString(),
     );
