@@ -38,9 +38,8 @@ class Sale with CustomizeMixins, HourMixins {
     return Card(
       margin: const EdgeInsets.only(bottom: 0.7),
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16),
-          bottomLeft: Radius.circular(16),
+        borderRadius: BorderRadius.all(
+          Radius.circular(16),
         ),
       ),
       child: Padding(

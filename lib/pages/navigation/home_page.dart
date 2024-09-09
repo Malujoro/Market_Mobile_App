@@ -98,5 +98,8 @@ class _HomePageState extends State<HomePage> with DialogueMixins {
     if (context.mounted) {
       await saleStore.getSales(context);
     }
+    if (context.mounted) {
+      await productStore.getProducts(context);
+    }
   }
 }

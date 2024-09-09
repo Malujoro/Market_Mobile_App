@@ -171,7 +171,7 @@ class _ProductItemPageState extends State<ProductItemPage>
                         validator: (value) => minLength(
                           value,
                           2,
-                          "O código de barras deve ter 12 dígitos",
+                          "A descrição deve conter mais que 2 caracteres",
                         ),
                         onChanged: (value) {
                           setState(() {

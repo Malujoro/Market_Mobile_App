@@ -41,9 +41,7 @@ class _InsightsPageState extends State<InsightsPage>
     saleStore = widget.saleStore;
     dropdownIndex = widget.dropdownIndex[0];
     dropdownValue = dayList[dropdownIndex];
-    if (saleStore.state.value.isEmpty) {
-      loadSales(context);
-    }
+    loadSales(context, loadData: saleStore.state.value.isEmpty);
   }
 
   @override
@@ -125,38 +123,49 @@ class _InsightsPageState extends State<InsightsPage>
               ),
             ),
             Flexible(
-              child: Container(
-                margin: const EdgeInsets.only(
-                    left: 35, right: 35, bottom: 35, top: 15),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 243, 236, 245),
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: ListView(
-                  padding: const EdgeInsets.all(16),
-                  shrinkWrap: true,
-                  children: saleStore.state.value.isEmpty
-                      ? const [
-                          Text(
-                            "Nenhuma venda nesta data",
-                            textAlign: TextAlign.center,
-                          )
-                        ]
-                      : [
-                          for (Sale sale in saleStore.state.value)
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SaleItemPage(
-                                              sale: sale,
-                                              showOnly: true,
-                                            )));
-                              },
-                              child: sale.productWidget(context),
+              child: RefreshIndicator(
+                displacement: 5,
+                onRefresh: () {
+                  return loadSales(context);
+                },
+                child: Container(
+                  alignment:
+                      saleStore.state.value.isEmpty ? Alignment.center : null,
+                  height: 530,
+                  margin: const EdgeInsets.only(
+                      left: 35, right: 35, bottom: 35, top: 15),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 243, 236, 245),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: ListView(
+                    padding: const EdgeInsets.all(16),
+                    shrinkWrap: true,
+                    children: saleStore.state.value.isEmpty
+                        ? const [
+                            Text(
+                              "Nenhuma venda nesta data",
+                              textAlign: TextAlign.center,
                             )
-                        ],
+                          ]
+                        : [
+                            for (Sale sale in saleStore.state.value)
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => SaleItemPage(
+                                                sale: sale,
+                                                showOnly: true,
+                                              )));
+                                },
+                                child: Padding(
+                                    padding: const EdgeInsets.all(2),
+                                    child: sale.productWidget(context)),
+                              )
+                          ],
+                  ),
                 ),
               ),
             ),
@@ -166,7 +175,7 @@ class _InsightsPageState extends State<InsightsPage>
     );
   }
 
-  void loadSales(BuildContext context) {
+  Future<void> loadSales(BuildContext context, {bool loadData = true}) async {
     dropdownIndex = dayList.indexOf(dropdownValue);
     widget.dropdownIndex[0] = dropdownIndex;
 
@@ -210,6 +219,8 @@ class _InsightsPageState extends State<InsightsPage>
         end!.microsecond,
       );
     }
-    saleStore.getSales(context, start, end);
+    if (loadData) {
+      saleStore.getSales(context, start, end);
+    }
   }
 }

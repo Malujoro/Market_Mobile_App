@@ -42,10 +42,6 @@ class _ProductPageState extends State<ProductPage> with DialogueMixins {
           return const CircularProgressIndicator();
         }
 
-        if (store.state.value.isEmpty) {
-          return const Text("Nenhum produto cadastrado");
-        }
-
         return Column(
           children: [
             Padding(
@@ -67,51 +63,71 @@ class _ProductPageState extends State<ProductPage> with DialogueMixins {
               ),
             ),
             Flexible(
-              child: Container(
-                margin: const EdgeInsets.all(25),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 243, 236, 245),
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: ListView(
-                  padding: const EdgeInsets.all(16),
-                  shrinkWrap: true,
-                  children: [
-                    for (Product product in store.state.value)
-                      if (searchController.text.isEmpty ||
-                          product.name
-                              .toLowerCase()
-                              .contains(searchController.text.toLowerCase()))
-                        GestureDetector(
-                          onTap: () {
-                            widget.showProductItemPage(context, product: product);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(3.0),
-                            child: Slidable(
-                              endActionPane: ActionPane(
-                                  extentRatio: 0.3,
-                                  motion: const DrawerMotion(),
-                                  children: [
-                                    SlidableAction(
-                                      onPressed: (BuildContext context) {
-                                        showDialogDeleteProduct(product);
-                                      },
-                                      backgroundColor: Colors.red,
-                                      foregroundColor: Colors.white,
-                                      icon: Icons.delete,
-                                      label: "Excluir",
-                                      borderRadius: const BorderRadius.only(
-                                        topRight: Radius.circular(16),
-                                        bottomRight: Radius.circular(16),
-                                      ),
-                                    )
-                                  ]),
-                              child: product.productWidget(context),
-                            ),
-                          ),
-                        ),
-                  ],
+              child: RefreshIndicator(
+                displacement: 5,
+                onRefresh: () {
+                  return store.getProducts(context);
+                },
+                child: Container(
+                  alignment:
+                      store.state.value.isEmpty ? Alignment.center : null,
+                  height: 530,
+                  margin: const EdgeInsets.all(25),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 243, 236, 245),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: ListView(
+                    padding: const EdgeInsets.all(16),
+                    shrinkWrap: true,
+                    children: store.state.value.isEmpty
+                        ? const [
+                            Text(
+                              "Nenhum produto cadastrado",
+                              textAlign: TextAlign.center,
+                            )
+                          ]
+                        : [
+                            for (Product product in store.state.value)
+                              if (searchController.text.isEmpty ||
+                                  product.name.toLowerCase().contains(
+                                      searchController.text.toLowerCase()))
+                                GestureDetector(
+                                  onTap: () {
+                                    widget.showProductItemPage(context,
+                                        product: product);
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(3.0),
+                                    child: Slidable(
+                                      endActionPane: ActionPane(
+                                          extentRatio: 0.3,
+                                          motion: const DrawerMotion(),
+                                          children: [
+                                            SlidableAction(
+                                              onPressed:
+                                                  (BuildContext context) {
+                                                showDialogDeleteProduct(
+                                                    product);
+                                              },
+                                              backgroundColor: Colors.red,
+                                              foregroundColor: Colors.white,
+                                              icon: Icons.delete,
+                                              label: "Excluir",
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                topRight: Radius.circular(16),
+                                                bottomRight:
+                                                    Radius.circular(16),
+                                              ),
+                                            )
+                                          ]),
+                                      child: product.productWidget(context),
+                                    ),
+                                  ),
+                                ),
+                          ],
+                  ),
                 ),
               ),
             ),

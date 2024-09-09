@@ -22,9 +22,7 @@ class _SalePageState extends State<SalePage>
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   TextEditingController barCodeController = TextEditingController();
-  TextEditingController nameController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
-  TextEditingController partialPriceController = TextEditingController();
 
   bool userEdited = false;
   bool showKeyboard = false;
@@ -58,7 +56,7 @@ class _SalePageState extends State<SalePage>
                 key: formKey,
                 child: Padding(
                   padding: const EdgeInsets.only(
-                      bottom: 25, left: 8, right: 8, top: 8),
+                      bottom: 75, left: 8, right: 8, top: 8),
                   child: SingleChildScrollView(
                     reverse: true,
                     child: Column(
@@ -67,7 +65,7 @@ class _SalePageState extends State<SalePage>
                       children: [
                         Flexible(
                           child: SizedBox(
-                            height: 350,
+                            height: 450,
                             // margin: const EdgeInsets.all(8),
                             child: Card(
                               color: const Color.fromARGB(255, 243, 236, 245),
@@ -156,15 +154,13 @@ class _SalePageState extends State<SalePage>
                                     }
 
                                     reset(
-                                        name: true,
-                                        selectedProduct: true,
-                                        partialPrice: true);
+                                      selectedProduct: true,
+                                    );
                                     setState(() {
                                       userEdited = true;
                                     });
                                   },
                                   onFieldSubmitted: (value) {
-                                    updateName(value);
                                     reset(quantity: true);
                                     focusNode.requestFocus();
                                   },
@@ -191,10 +187,9 @@ class _SalePageState extends State<SalePage>
                                     suffixIcon: IconButton(
                                         onPressed: () {
                                           reset(
-                                              barCode: true,
-                                              name: true,
-                                              selectedProduct: true,
-                                              partialPrice: true);
+                                            barCode: true,
+                                            selectedProduct: true,
+                                          );
                                         },
                                         icon: const Icon(Icons.cancel)),
                                     labelText: "Código de barras",
@@ -220,10 +215,7 @@ class _SalePageState extends State<SalePage>
                               onSelected: (Product product) {
                                 userEdited = true;
                                 barCodeController.text = product.barCode;
-                                nameController.text = product.name;
                                 selectedProduct = product;
-                                updatePartialPrice(
-                                    product.price, quantityController.text);
                                 touchAddProduct();
                                 reset(quantity: true);
                               },
@@ -243,14 +235,6 @@ class _SalePageState extends State<SalePage>
                             ),
                             const SizedBox(height: 16),
                             TextFormField(
-                              enabled: false,
-                              readOnly: true,
-                              controller: nameController,
-                              decoration:
-                                  const InputDecoration(labelText: "Nome"),
-                            ),
-                            const SizedBox(height: 16),
-                            TextFormField(
                               controller: quantityController,
                               keyboardType: TextInputType.number,
                               validator: (value) => combine([
@@ -261,28 +245,12 @@ class _SalePageState extends State<SalePage>
                                 setState(() {
                                   userEdited = true;
                                 });
-                                if (value.isEmpty) {
-                                  reset(partialPrice: true);
-                                } else if (selectedProduct != null) {
-                                  updatePartialPrice(
-                                      selectedProduct!.price, value);
-                                }
                               },
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
                               ],
                               decoration: const InputDecoration(
                                 labelText: "Quantidade",
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            TextFormField(
-                              enabled: false,
-                              readOnly: true,
-                              controller: partialPriceController,
-                              decoration: const InputDecoration(
-                                labelText: "Preço parcial",
-                                prefix: Text("R\$ "),
                               ),
                             ),
                             const SizedBox(height: 16),
@@ -359,7 +327,7 @@ class _SalePageState extends State<SalePage>
               productBarCode: selectedProduct!.barCode,
               productName: selectedProduct!.name,
               quantity: int.parse(quantityController.text),
-              partialPrice: double.parse(partialPriceController.text));
+              partialPrice: selectedProduct!.price);
           setState(() {
             saleProducts.add(saleProduct);
           });
@@ -387,46 +355,16 @@ class _SalePageState extends State<SalePage>
     return productsOption;
   }
 
-  void updateName(String barCode) {
-    List<Product> product = selectProduct(barCode);
-    if (product.isNotEmpty) {
-      selectedProduct = product[0];
-      nameController.text = selectedProduct!.name;
-
-      if (quantityController.text.isNotEmpty) {
-        updatePartialPrice(product[0].price, quantityController.text);
-      }
-    }
-  }
-
-  void updatePartialPrice(double price, String quantity) {
-    if (quantity.isEmpty) {
-      reset(partialPrice: true);
-    } else {
-      // double result = price * double.parse(quantity);
-      // partialPriceController.text = result.toStringAsFixed(2);
-      partialPriceController.text = price.toString();
-    }
-  }
-
   void reset(
       {bool all = false,
       bool barCode = false,
-      bool name = false,
       bool quantity = false,
-      bool partialPrice = false,
       bool selectedProduct = false}) {
     if (barCode || all) {
       barCodeController.clear();
     }
-    if (name || all) {
-      nameController.clear();
-    }
     if (quantity || all) {
       quantityController.text = "1";
-    }
-    if (partialPrice || all) {
-      partialPriceController.text = "0";
     }
     if (selectedProduct || all) {
       this.selectedProduct = null;

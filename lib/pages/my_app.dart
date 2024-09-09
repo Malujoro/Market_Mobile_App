@@ -100,9 +100,12 @@ class _MyAppState extends State<MyApp> with DialogueMixins, TokenMixins {
                       ),
             bottomNavigationBar: NavigationBar(
               onDestinationSelected: (int index) {
-                setState(() {
-                  currentPageIndex = index;
-                });
+                if (!saleStore.isLoading.value &&
+                    !productStore.isLoading.value) {
+                  setState(() {
+                    currentPageIndex = index;
+                  });
+                }
               },
               selectedIndex: currentPageIndex,
               destinations: const [
