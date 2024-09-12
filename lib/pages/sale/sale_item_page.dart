@@ -191,13 +191,15 @@ class _SaleItemPageState extends State<SaleItemPage>
                                   () => isPositive(value),
                                   dropdownIndex == Discount.real.index
                                       ? () => lessEqualThan(
-                                          value,
-                                          sale.totalPrice,
-                                          "O desconto deve ser menor ou igual a R\$${sale.totalPrice.toStringAsFixed(2)}")
+                                            value,
+                                            sale.totalPrice,
+                                            "O desconto deve ser menor ou igual a R\$${sale.totalPrice.toStringAsFixed(2)}",
+                                          )
                                       : () => lessEqualThan(
-                                          value,
-                                          100,
-                                          "O desconto deve ser menor ou igual a 100%")
+                                            value,
+                                            100,
+                                            "O desconto deve ser menor ou igual a 100%",
+                                          )
                                 ]),
                                 onChanged: (value) {
                                   setState(() {

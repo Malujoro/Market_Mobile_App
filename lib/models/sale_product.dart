@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:market_mobile/mixins/customize_mixins.dart';
 
 class SaleProduct with CustomizeMixins {
-  late String productBarCode;
+  String? productBarCode;
   late String productName;
   late int quantity;
   late double partialPrice;
 
   SaleProduct({
-    required this.productBarCode,
+    this.productBarCode,
     required this.productName,
     required this.quantity,
     required this.partialPrice,

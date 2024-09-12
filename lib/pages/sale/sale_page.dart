@@ -20,8 +20,11 @@ class SalePage extends StatefulWidget {
 class _SalePageState extends State<SalePage>
     with ValidationsMixin, DialogueMixins {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> newFormKey = GlobalKey<FormState>();
 
   TextEditingController barCodeController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController priceController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
 
   bool userEdited = false;
@@ -64,61 +67,86 @@ class _SalePageState extends State<SalePage>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Flexible(
-                          child: SizedBox(
-                            height: 450,
-                            // margin: const EdgeInsets.all(8),
-                            child: Card(
-                              color: const Color.fromARGB(255, 243, 236, 245),
-                              child: ListView(
-                                shrinkWrap: true,
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            "Nome",
-                                            textAlign: TextAlign.start,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
+                          child: Stack(
+                            children: [
+                              SizedBox(
+                                height: 450,
+                                // margin: const EdgeInsets.all(8),
+                                child: Card(
+                                  color:
+                                      const Color.fromARGB(255, 243, 236, 245),
+                                  child: ListView(
+                                    shrinkWrap: true,
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                "Nome",
+                                                textAlign: TextAlign.start,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                "Quant.",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                "Preço",
+                                                textAlign: TextAlign.end,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                            SizedBox(width: 63),
+                                          ],
                                         ),
-                                        Expanded(
-                                          child: Text(
-                                            "Quant.",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            "Preço",
-                                            textAlign: TextAlign.end,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        SizedBox(width: 63),
-                                      ],
-                                    ),
-                                  ),
-                                  for (SaleProduct saleProduct in saleProducts)
-                                    Padding(
-                                      padding: const EdgeInsets.all(2.0),
-                                      child: saleProduct.saleProductWidget(
-                                        context,
-                                        removeProduct: () {
-                                          removeProduct(saleProduct);
-                                        },
                                       ),
-                                    )
-                                ],
+                                      for (SaleProduct saleProduct
+                                          in saleProducts)
+                                        Padding(
+                                          padding: const EdgeInsets.all(2.0),
+                                          child: saleProduct.saleProductWidget(
+                                            context,
+                                            removeProduct: () {
+                                              removeProduct(saleProduct);
+                                            },
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
+                              Positioned(
+                                left: 370,
+                                right: 370,
+                                bottom: 0,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white),
+                                  onPressed: () {
+                                    touchAddNewProduct(context);
+                                  },
+                                  child: const Text(
+                                    "Adicionar produto não cadastrado",
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -258,12 +286,15 @@ class _SalePageState extends State<SalePage>
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 TextButton(
-                                  onPressed: touchAddProduct,
+                                  onPressed: () {
+                                    touchAddProduct();
+                                  },
                                   style: TextButton.styleFrom(
                                     backgroundColor: const Color.fromARGB(
                                         255, 243, 236, 245),
                                   ),
-                                  child: const Text("Adicionar produto"),
+                                  child: const Text(
+                                      "Adicionar produto cadastrado"),
                                 ),
                                 const SizedBox(
                                   width: 25,
@@ -337,6 +368,93 @@ class _SalePageState extends State<SalePage>
     }
   }
 
+  void touchAddNewProduct(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(
+            title: const Text("Adicionar novo produto"),
+            content: Form(
+              key: newFormKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    autofocus: true,
+                    controller: nameController,
+                    keyboardType: TextInputType.text,
+                    validator: (value) => combine([
+                      () => isNotEmpty(value),
+                      () => minLength(value, 2),
+                    ]),
+                    onChanged: (value) {
+                      setState(() {
+                        userEdited = true;
+                      });
+                    },
+                    textInputAction: TextInputAction.next,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(100),
+                      FilteringTextInputFormatter.allow(RegExp("[a-z A-Z 0-9]"))
+                    ],
+                    decoration: const InputDecoration(
+                      labelText: "Nome do Produto",
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: priceController,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    validator: (value) => combine([
+                      () => isNotEmpty(value),
+                      () => isPositive(value),
+                    ]),
+                    onChanged: (value) {
+                      setState(() {
+                        userEdited = true;
+                      });
+                    },
+                    textInputAction: TextInputAction.next,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r'^\d+(\.\d*)?')),
+                    ],
+                    decoration: const InputDecoration(
+                      labelText: "Preço",
+                      prefix: Text("R\$ "),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  addNewProduct(context);
+                },
+                child: const Text("Adicionar"),
+              ),
+            ],
+          );
+        });
+  }
+
+  void addNewProduct(BuildContext context) {
+    if (newFormKey.currentState!.validate()) {
+      Navigator.pop(context);
+      SaleProduct saleProduct = SaleProduct(
+          productName: nameController.text,
+          quantity: int.parse(quantityController.text),
+          partialPrice: double.parse(priceController.text));
+      setState(() {
+        saleProducts.add(saleProduct);
+      });
+      reset(all: true);
+    }
+  }
+
   List<Product> selectAllProducts(String barCode) {
     List<Product> productsOption = widget.products.where(
       (Product product) {
@@ -359,7 +477,9 @@ class _SalePageState extends State<SalePage>
       {bool all = false,
       bool barCode = false,
       bool quantity = false,
-      bool selectedProduct = false}) {
+      bool selectedProduct = false,
+      bool name = false,
+      bool price = false}) {
     if (barCode || all) {
       barCodeController.clear();
     }
@@ -368,6 +488,14 @@ class _SalePageState extends State<SalePage>
     }
     if (selectedProduct || all) {
       this.selectedProduct = null;
+    }
+
+    if (name || all) {
+      nameController.clear();
+    }
+
+    if (price || all) {
+      priceController.text = "0";
     }
   }
 
