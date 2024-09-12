@@ -273,6 +273,7 @@ class _LoginPageState extends State<LoginPage>
     });
     request.headers.addAll(headers);
 
+    // TODO Erro do CORS
     http.StreamedResponse response = await request.send();
     isLoading.value = false;
 

@@ -189,6 +189,15 @@ class _SaleItemPageState extends State<SaleItemPage>
                                         decimal: true),
                                 validator: (value) => combine([
                                   () => isPositive(value),
+                                  dropdownIndex == Discount.real.index
+                                      ? () => lessEqualThan(
+                                          value,
+                                          sale.totalPrice,
+                                          "O desconto deve ser menor ou igual a R\$${sale.totalPrice.toStringAsFixed(2)}")
+                                      : () => lessEqualThan(
+                                          value,
+                                          100,
+                                          "O desconto deve ser menor ou igual a 100%")
                                 ]),
                                 onChanged: (value) {
                                   setState(() {
@@ -206,6 +215,7 @@ class _SaleItemPageState extends State<SaleItemPage>
                                       RegExp(r'^\d+(\.\d*)?')),
                                 ],
                                 decoration: InputDecoration(
+                                  errorMaxLines: 2,
                                   labelText: "Desconto",
                                   prefix:
                                       dropdownIndex == Discount.real.index ||

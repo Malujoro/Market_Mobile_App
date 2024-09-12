@@ -17,7 +17,7 @@ mixin ValidationsMixin {
 
   String? isNotNegative(String? value, [String? message]) {
     if (value!.isNotEmpty && double.parse(value) < 0) {
-      return message ?? "O valor deve maior que 0";
+      return message ?? "O valor deve ser maior que 0";
     }
     return null;
   }
@@ -25,6 +25,13 @@ mixin ValidationsMixin {
   String? minLength(String? value, int length, [String? message]) {
     if (value!.isNotEmpty && value.length < length) {
       return message ?? "Mínimo de $length caracteres";
+    }
+    return null;
+  }
+
+  String? lessEqualThan(String? value, double value2, [String? message]) {
+    if (value!.isNotEmpty && double.parse(value) > value2) {
+      return message ?? "O valor deve ser menor ou igual que $value2";
     }
     return null;
   }
