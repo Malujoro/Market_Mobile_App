@@ -262,25 +262,7 @@ class _SalePageState extends State<SalePage>
                               },
                             ),
                             const SizedBox(height: 16),
-                            TextFormField(
-                              controller: quantityController,
-                              keyboardType: TextInputType.number,
-                              validator: (value) => combine([
-                                () => isNotEmpty(value),
-                                () => isPositive(value),
-                              ]),
-                              onChanged: (value) {
-                                setState(() {
-                                  userEdited = true;
-                                });
-                              },
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                              ],
-                              decoration: const InputDecoration(
-                                labelText: "Quantidade",
-                              ),
-                            ),
+                            quantityFieldCreator(),
                             const SizedBox(height: 16),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -339,8 +321,8 @@ class _SalePageState extends State<SalePage>
   }
 
   void touchAddProduct() {
-    bool exist = false;
     if (formKey.currentState!.validate()) {
+      bool exist = false;
       selectedProduct = selectProduct(barCodeController.text)[0];
 
       if (selectedProduct != null) {
@@ -396,12 +378,15 @@ class _SalePageState extends State<SalePage>
                     textInputAction: TextInputAction.next,
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(100),
-                      FilteringTextInputFormatter.allow(RegExp("[a-z A-Z 0-9]"))
+                      // TODO Retirando o filtro de caracteres especiais
+                      // FilteringTextInputFormatter.allow(RegExp("[a-z A-Z 0-9]"))
                     ],
                     decoration: const InputDecoration(
                       labelText: "Nome do Produto",
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  quantityFieldCreator(),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: priceController,
@@ -441,16 +426,52 @@ class _SalePageState extends State<SalePage>
         });
   }
 
+  TextFormField quantityFieldCreator() {
+    return TextFormField(
+      controller: quantityController,
+      keyboardType: TextInputType.number,
+      validator: (value) => combine([
+        () => isNotEmpty(value),
+        () => isPositive(value),
+      ]),
+      onChanged: (value) {
+        setState(() {
+          userEdited = true;
+        });
+      },
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly,
+      ],
+      decoration: const InputDecoration(
+        labelText: "Quantidade",
+      ),
+    );
+  }
+
   void addNewProduct(BuildContext context) {
     if (newFormKey.currentState!.validate()) {
       Navigator.pop(context);
-      SaleProduct saleProduct = SaleProduct(
-          productName: nameController.text,
-          quantity: int.parse(quantityController.text),
-          partialPrice: double.parse(priceController.text));
-      setState(() {
-        saleProducts.add(saleProduct);
-      });
+      bool exist = false;
+
+      for (SaleProduct saleProduct in saleProducts) {
+        if (saleProduct.productName.toLowerCase() == nameController.text.toLowerCase() &&
+            saleProduct.partialPrice == double.parse(priceController.text)) {
+          setState(() {
+            saleProduct.quantity += int.parse(quantityController.text);
+          });
+          exist = true;
+        }
+      }
+
+      if (!exist) {
+        SaleProduct saleProduct = SaleProduct(
+            productName: nameController.text,
+            quantity: int.parse(quantityController.text),
+            partialPrice: double.parse(priceController.text));
+        setState(() {
+          saleProducts.add(saleProduct);
+        });
+      }
       reset(all: true);
     }
   }

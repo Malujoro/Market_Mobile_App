@@ -54,7 +54,8 @@ class _ProductPageState extends State<ProductPage> with DialogueMixins {
                 },
                 inputFormatters: [
                   LengthLimitingTextInputFormatter(100),
-                  FilteringTextInputFormatter.allow(RegExp("[a-z A-Z 0-9]"))
+                  // TODO Retirando o filtro de caracteres especiais
+                  // FilteringTextInputFormatter.allow(RegExp("[a-z A-Z 0-9]"))
                 ],
                 decoration: const InputDecoration(
                   suffixIcon: Icon(Icons.search),

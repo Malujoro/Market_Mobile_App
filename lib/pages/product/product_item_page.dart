@@ -126,8 +126,9 @@ class _ProductItemPageState extends State<ProductItemPage>
                         textInputAction: TextInputAction.next,
                         inputFormatters: [
                           LengthLimitingTextInputFormatter(100),
-                          FilteringTextInputFormatter.allow(
-                              RegExp("[a-z A-Z 0-9]"))
+                          // TODO Retirando o filtro de caracteres especiais
+                          // FilteringTextInputFormatter.allow(
+                          //     RegExp("[a-z A-Z 0-9]"))
                         ],
                         decoration: const InputDecoration(
                           labelText: "Nome do Produto",
@@ -185,8 +186,9 @@ class _ProductItemPageState extends State<ProductItemPage>
                         textInputAction: TextInputAction.done,
                         inputFormatters: [
                           LengthLimitingTextInputFormatter(100),
-                          FilteringTextInputFormatter.allow(
-                              RegExp("[a-z A-Z 0-9]"))
+                          // TODO Retirando o filtro de caracteres especiais
+                          // FilteringTextInputFormatter.allow(
+                          //     RegExp("[a-z A-Z 0-9]"))
                         ],
                         decoration: const InputDecoration(
                           labelText: "Descrição",

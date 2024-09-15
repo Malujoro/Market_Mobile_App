@@ -18,6 +18,8 @@ import 'package:market_mobile/stores/sale_store.dart';
 
 // TODO: Criar ação no Appbar para escolher como ordenar produtos e/ou vendas
 
+enum PageIndex { home, insights, product, user }
+
 class MyApp extends StatefulWidget {
   const MyApp(this.jwt, this.payload, {super.key});
 
@@ -84,20 +86,29 @@ class _MyAppState extends State<MyApp> with DialogueMixins, TokenMixins {
           child: Scaffold(
             appBar: AppBar(
               title: const Text("Logo"),
-            ),
-            floatingActionButton:
-                currentPageIndex != 2 || productStore.isLoading.value
-                    ? null
-                    : SizedBox(
-                        width: 75,
-                        height: 75,
-                        child: FloatingActionButton(
-                          onPressed: () {
-                            showProductItemPage(context);
+              actions: currentPageIndex == PageIndex.product.index
+                  ? [
+                      IconButton(
+                          onPressed: () async {
+                            productStore.getProducts(context);
                           },
-                          child: const Icon(Icons.add, size: 64),
-                        ),
-                      ),
+                          icon: const Icon(Icons.refresh))
+                    ]
+                  : null,
+            ),
+            floatingActionButton: currentPageIndex != PageIndex.product.index ||
+                    productStore.isLoading.value
+                ? null
+                : SizedBox(
+                    width: 75,
+                    height: 75,
+                    child: FloatingActionButton(
+                      onPressed: () {
+                        showProductItemPage(context);
+                      },
+                      child: const Icon(Icons.add, size: 64),
+                    ),
+                  ),
             bottomNavigationBar: NavigationBar(
               onDestinationSelected: (int index) {
                 if (!saleStore.isLoading.value &&

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:market_mobile/mixins/customize_mixins.dart';
 
@@ -24,8 +26,8 @@ class Product with CustomizeMixins {
     return Product(
       idProduct: map["idProduct"],
       barCode: map["barCode"],
-      name: map["name"],
-      description: map["description"],
+      name: utf8.decode(map["name"].codeUnits),
+      description: utf8.decode(map["description"].codeUnits),
       price: map["price"] * 1.0,
       stock: map["stock"],
       warningStock: map["warningStock"],
